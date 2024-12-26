@@ -1,0 +1,39 @@
+name: Build and Push Dependencies
+
+on:
+  push:
+    branches:
+      - dependencies-source
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: src
+          ref: dependencies-source
+          persist-credentials: false
+
+      - name: Setup MSVC
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Configure CMake
+        working-directory: src
+        run: |
+          cmake -B build -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF
+
+      # - name: Build
+      #   working-directory: src
+      #   run: |
+      #     cmake --build build --config Release
+
+      # - name: Push to dependencies branch
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git checkout -b dependencies
+      #     git add -f ${{github.workspace}}/build
+      #     git commit -m "Update dependencies"
+      #     git push -f origin dependencies
