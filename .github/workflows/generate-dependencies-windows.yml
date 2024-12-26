@@ -25,13 +25,15 @@ jobs:
           persist-credentials: false
 
       - name: Copy Release folder to dst/dawn
+        shell: pwsh
         run: |
           if (Test-Path dst/dawn) {
             Remove-Item -Recurse -Force dst/dawn
           }
           New-Item -ItemType Directory -Force -Path dst
           Copy-Item -Path src/dawn -Destination dst/dawn -Recurse
-        shell: pwsh
+          Write-Host "Files in dst/dawn:"
+          Get-ChildItem -Path dst/dawn -Name
 
       # - name: Init Submodules
       #   working-directory: src
