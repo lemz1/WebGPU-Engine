@@ -9,6 +9,11 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
+      - name: Install Windows SDK
+        uses: GuillaumeFalourd/setup-windows10-sdk-action@v1
+        with:
+          sdk-version: 20348
+
       - name: Setup MSVC
         uses: microsoft/setup-msbuild@v1.3.1
 
