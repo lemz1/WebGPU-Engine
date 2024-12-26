@@ -1,0 +1,4 @@
+[submodule "vnd"]
+	path = vnd
+	url = https://github.com/lemz1/WebGPU-Engine.git
+	branch = dependencies
