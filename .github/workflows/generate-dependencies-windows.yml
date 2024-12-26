@@ -17,11 +17,18 @@ jobs:
       - name: Setup MSVC
         uses: microsoft/setup-msbuild@v1.3.1
 
-      - name: Checkout repository
+      - name: Checkout Dependencies-Source
         uses: actions/checkout@v3
         with:
           path: src
           ref: dependencies-source
+          persist-credentials: false
+
+      - name: Checkout Dependencies
+        uses: actions/checkout@v3
+        with:
+          path: dst
+          ref: dependencies
           persist-credentials: false
 
       - name: Init Submodules
@@ -36,13 +43,6 @@ jobs:
           cmake --build out/Release --config Release
           cmake --install out/Release --prefix install/Release
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          path: dst
-          ref: dependencies
-          persist-credentials: false
-
       - name: Copy Dawn Install
         shell: pwsh
         run: |
@@ -56,6 +56,7 @@ jobs:
         run: |
           git config --global user.name lemz1
           git config --global user.email ${{ secrets.EMAIL }}
+          git add -A
           git commit -m "Workflow: Push Generated Dependencies"
           git remote set-url --push origin https://x-access-token:${{ secrets.PAT }}@github.com/lemz1/WebGPU-Engine.git
           git push
