@@ -24,15 +24,12 @@ jobs:
         run: |
           git submodule update --init
 
-      - name: Configure CMake
+      - name: Build Dawn
         working-directory: src/dawn
         run: |
-          cmake -B build -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF
-
-      # - name: Build
-      #   working-directory: src
-      #   run: |
-      #     cmake --build build --config Release
+          cmake -S . -B out/Release -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF
+          cmake --build out/Release --config Release
+          cmake --install out/Release --prefix install/Release
 
       # - name: Push to dependencies branch
       #   run: |
