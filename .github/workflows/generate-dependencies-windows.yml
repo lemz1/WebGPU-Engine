@@ -36,23 +36,26 @@ jobs:
           cmake --build out/Release --config Release
           cmake --install out/Release --prefix install/Release
 
-      # - name: Push to dependencies branch
-      #   run: |
-      #     git config --local user.email "action@github.com"
-      #     git config --local user.name "GitHub Action"
-      #     git checkout -b dependencies
-      #     git add -f ${{github.workspace}}/build
-      #     git commit -m "Update dependencies"
-      #     git push -f origin dependencies
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: dst
+          ref: dependencies
+          persist-credentials: false
 
       - name: Copy Dawn Install
         shell: pwsh
         run: |
-          if (Test-Path dst/dawn) {
-            Remove-Item -Recurse -Force dst/dawn
+          if (Test-Path dst/webgpu) {
+            Remove-Item -Recurse -Force dst/webgpu
           }
-          New-Item -ItemType Directory -Force -Path dst
-          Copy-Item -Path src/dawn/install/Release -Destination dst/dawn -Recurse
-          Write-Host "Files in dst/dawn:"
-          Get-ChildItem -Path dst/dawn -Name
+          Copy-Item -Path src/dawn/install/Release -Destination dst/webgpu -Recurse
 
+      - name: Push to dependencies branch
+        working-directory: dst
+        run: |
+          git config --global user.name lemz1
+          git config --global user.email ${{ secrets.EMAIL }}
+          git commit -m "Workflow: Push Generated Dependencies"
+          git remote set-url --push origin https://x-access-token:${{ secrets.PAT }}@github.com/lemz1/WebGPU-Engine.git
+          git push
