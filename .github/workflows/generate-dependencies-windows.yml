@@ -24,17 +24,26 @@ jobs:
           ref: dependencies-source
           persist-credentials: false
 
-      - name: Init Submodules
-        working-directory: src
+      - name: Copy Release folder to dst/dawn
         run: |
-          git submodule update --init
+          if (Test-Path dst/dawn) {
+            Remove-Item -Recurse -Force dst/dawn
+          }
+          New-Item -ItemType Directory -Force -Path dst
+          Copy-Item -Path src/dawn -Destination dst/dawn -Recurse
+        shell: pwsh
 
-      - name: Build Dawn
-        working-directory: src/dawn
-        run: |
-          cmake -S . -B out/Release -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
-          cmake --build out/Release --config Release
-          cmake --install out/Release --prefix install/Release
+      # - name: Init Submodules
+      #   working-directory: src
+      #   run: |
+      #     git submodule update --init
+
+      # - name: Build Dawn
+      #   working-directory: src/dawn
+      #   run: |
+      #     cmake -S . -B out/Release -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+      #     cmake --build out/Release --config Release
+      #     cmake --install out/Release --prefix install/Release
 
       # - name: Push to dependencies branch
       #   run: |
