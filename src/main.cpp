@@ -1,49 +1,42 @@
-#include <webgpu/webgpu_cpp.h>
+#include <webgpu/webgpu.h>
 
-#include <cstdlib>
 #include <iostream>
 
 int main()
 {
-  wgpu::InstanceDescriptor instanceDescriptor{};
+  WGPUInstanceDescriptor instanceDescriptor{};
   instanceDescriptor.features.timedWaitAnyEnable = true;
-  wgpu::Instance instance = wgpu::CreateInstance(&instanceDescriptor);
+  WGPUInstance instance = wgpuCreateInstance(&instanceDescriptor);
   if (instance == nullptr)
   {
-    std::cerr << "Instance creation failed!\n";
+    std::cerr << "[WebGPU] Failed to create Instance!" << std::endl;
     return 1;
   }
   // Synchronously request the adapter.
-  wgpu::RequestAdapterOptions options = {};
-  wgpu::Adapter adapter;
-  wgpu::RequestAdapterCallbackInfo callbackInfo = {};
-  callbackInfo.nextInChain = nullptr;
-  callbackInfo.mode = wgpu::CallbackMode::WaitAnyOnly;
-  callbackInfo.callback = [](WGPURequestAdapterStatus status,
-                             WGPUAdapter adapter, WGPUStringView message,
-                             void *userdata)
+  WGPURequestAdapterOptions options = {};
+  WGPUAdapter adapter;
+  WGPURequestAdapterCallback callback =
+      [](WGPURequestAdapterStatus status, WGPUAdapter adapter,
+         WGPUStringView message, void* userdata)
   {
     if (status != WGPURequestAdapterStatus_Success)
     {
-      std::cerr << "Failed to get an adapter:" << message.data;
+      std::cerr << "[WebGPU] Failed to get an adapter:" << message.data;
       return;
     }
-    *static_cast<wgpu::Adapter *>(userdata) = wgpu::Adapter::Acquire(adapter);
+    *static_cast<WGPUAdapter*>(userdata) = adapter;
   };
-  callbackInfo.userdata = &adapter;
-  instance.WaitAny(instance.RequestAdapter(&options, callbackInfo), UINT64_MAX);
+  wgpuInstanceRequestAdapter(instance, &options, callback, &adapter);
   if (adapter == nullptr)
   {
-    std::cerr << "RequestAdapter failed!\n";
+    std::cerr << "[WebGPU] Failed to request adapter!" << std::endl;
     return 1;
   }
 
-  wgpu::DawnAdapterPropertiesPowerPreference power_props{};
+  WGPUAdapterInfo info{};
+  wgpuAdapterGetInfo(adapter, &info);
 
-  wgpu::AdapterInfo info{};
-  info.nextInChain = &power_props;
-
-  adapter.GetInfo(&info);
+  std::cout << "Vendor ID: " << info.vendorID << std::endl;
 
   return 0;
 }
