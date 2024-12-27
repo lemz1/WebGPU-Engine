@@ -4,8 +4,18 @@
 
 #include "engine/wgpu/util.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace engine::wgpu
 {
+struct DeviceUserData
+{
+  bool finished = false;
+  WGPUDevice device = nullptr;
+};
+
 static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
                           WGPUStringView message, void* userdata);
 
@@ -36,11 +46,22 @@ Device::Device(const Adapter& adapter, WGPUDeviceDescriptor descriptor)
     descriptor.deviceLostCallbackInfo2.userdata2 = nullptr;
   }
 
-  wgpuAdapterRequestDevice(adapter, &descriptor, RequestDevice, &_handle);
-  if (!_handle)
+  DeviceUserData data{};
+  wgpuAdapterRequestDevice(adapter, &descriptor, RequestDevice, &data);
+
+#ifdef __EMSCRIPTEN__
+  while (!data.finished)
+  {
+    emscripten_sleep(100);
+  }
+#endif
+
+  if (!data.device)
   {
     std::cerr << "[WebGPU] Could not request Device" << std::endl;
+    return;
   }
+  _handle = data.device;
 }
 
 Device::~Device()
@@ -51,12 +72,14 @@ Device::~Device()
 static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
                           WGPUStringView message, void* userdata)
 {
+  auto& data = *static_cast<DeviceUserData*>(userdata);
+  data.finished = true;
   if (status != WGPURequestDeviceStatus_Success)
   {
     std::cerr << "[WebGPU] Failed to get a Device" << std::endl;
     return;
   }
-  *static_cast<WGPUDevice*>(userdata) = device;
+  data.device = device;
 }
 
 void UncapturedError(WGPUDevice const* device, WGPUErrorType type,
