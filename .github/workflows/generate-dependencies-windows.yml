@@ -36,35 +36,50 @@ jobs:
         run: |
           git submodule update --init
 
-      - name: Build Dawn
+      # - name: Build Dawn
+      #   working-directory: src/dawn
+      #   run: |
+      #     cmake -S . -B out/Release/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+      #     cmake --build out/Release/webgpu --config Release
+      #     cmake --install out/Release/webgpu --prefix install/Release/webgpu
+
+      # - name: Copy Dawn Install
+      #   shell: pwsh
+      #   run: |
+      #     if (Test-Path dst/webgpu) {
+      #       Remove-Item -Recurse -Force dst/webgpu
+      #     }
+      #     Copy-Item -Path src/dawn/install/Release/webgpu -Destination dst/webgpu -Recurse
+
+      # - name: Build GLFW
+      #   working-directory: src/dawn
+      #   run: |
+      #     cmake -S third_party/glfw -B out/Release/glfw -G "Visual Studio 17 2022" -DGLFW_INSTALL=ON -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_DOCS=OFF -DGLFW_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+      #     cmake --build out/Release/glfw --config Release
+      #     cmake --install out/Release/glfw --prefix install/Release/glfw
+
+      # - name: Copy GLFW Install
+      #   shell: pwsh
+      #   run: |
+      #     if (Test-Path dst/glfw) {
+      #       Remove-Item -Recurse -Force dst/glfw
+      #     }
+      #     Copy-Item -Path src/dawn/install/Release/glfw -Destination dst/glfw -Recurse
+
+      - name: Build Dawn GLFW
         working-directory: src/dawn
         run: |
-          cmake -S . -B out/Release/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
-          cmake --build out/Release/webgpu --config Release
-          cmake --install out/Release/webgpu --prefix install/Release/webgpu
+          cmake -S src/dawn/glfw -B out/Release/dawn-glfw -G "Visual Studio 17 2022" -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake --build out/Release/dawn-glfw --config Release
+          cmake --install out/Release/dawn-glfw --prefix install/Release/dawn-glfw
 
-      - name: Copy Dawn Install
+      - name: Copy Dawn GLFW Install
         shell: pwsh
         run: |
-          if (Test-Path dst/webgpu) {
-            Remove-Item -Recurse -Force dst/webgpu
+          if (Test-Path dst/dawn-glfw) {
+            Remove-Item -Recurse -Force dst/dawn-glfw
           }
-          Copy-Item -Path src/dawn/install/Release/webgpu -Destination dst/webgpu -Recurse
-
-      - name: Build GLFW
-        working-directory: src/dawn
-        run: |
-          cmake -S third_party/glfw -B out/Release/glfw -G "Visual Studio 17 2022" -DGLFW_INSTALL=ON -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_DOCS=OFF -DGLFW_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
-          cmake --build out/Release/glfw --config Release
-          cmake --install out/Release/glfw --prefix install/Release/glfw
-
-      - name: Copy GLFW Install
-        shell: pwsh
-        run: |
-          if (Test-Path dst/glfw) {
-            Remove-Item -Recurse -Force dst/glfw
-          }
-          Copy-Item -Path src/dawn/install/Release/glfw -Destination dst/glfw -Recurse
+          Copy-Item -Path src/dawn/install/Release/dawn-glfw -Destination dst/dawn-glfw -Recurse
 
       - name: Push to dependencies branch
         working-directory: dst
