@@ -9,8 +9,7 @@ namespace engine::wgpu
 class Device
 {
  public:
-  explicit Device(const Adapter& adapter,
-                  const WGPUDeviceDescriptor* descriptor);
+  explicit Device(const Adapter& adapter, WGPUDeviceDescriptor descriptor);
   ~Device();
 
   WGPUDevice GetHandle() const

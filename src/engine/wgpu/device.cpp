@@ -9,18 +9,38 @@ namespace engine::wgpu
 static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
                           WGPUStringView message, void* userdata);
 
-static void LogDevice(WGPULoggingType type, WGPUStringView message,
-                      void* userdata);
+static void UncapturedError(WGPUDevice const* device, WGPUErrorType type,
+                            struct WGPUStringView message, void* userdata1,
+                            void* userdata2);
 
-Device::Device(const Adapter& adapter, const WGPUDeviceDescriptor* descriptor)
+static void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
+                         struct WGPUStringView message, void* userdata1,
+                         void* userdata2);
+
+Device::Device(const Adapter& adapter, WGPUDeviceDescriptor descriptor)
 {
-  wgpuAdapterRequestDevice(adapter, descriptor, RequestDevice, &_handle);
+  if (descriptor.uncapturedErrorCallbackInfo2.callback == nullptr)
+  {
+    descriptor.uncapturedErrorCallbackInfo2.callback = UncapturedError;
+    descriptor.uncapturedErrorCallbackInfo2.nextInChain = nullptr;
+    descriptor.uncapturedErrorCallbackInfo2.userdata1 = nullptr;
+    descriptor.uncapturedErrorCallbackInfo2.userdata2 = nullptr;
+  }
+
+  if (descriptor.deviceLostCallbackInfo2.callback == nullptr)
+  {
+    descriptor.deviceLostCallbackInfo2.callback = LostCallback;
+    descriptor.deviceLostCallbackInfo2.nextInChain = nullptr;
+    descriptor.deviceLostCallbackInfo2.mode = WGPUCallbackMode_WaitAnyOnly;
+    descriptor.deviceLostCallbackInfo2.userdata1 = nullptr;
+    descriptor.deviceLostCallbackInfo2.userdata2 = nullptr;
+  }
+
+  wgpuAdapterRequestDevice(adapter, &descriptor, RequestDevice, &_handle);
   if (!_handle)
   {
     std::cerr << "[WebGPU] Could not request Device" << std::endl;
   }
-
-  wgpuDeviceSetLoggingCallback(_handle, LogDevice, nullptr);
 }
 
 Device::~Device()
@@ -39,17 +59,15 @@ static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
   *static_cast<WGPUDevice*>(userdata) = device;
 }
 
-static void LogDevice(WGPULoggingType type, WGPUStringView message,
-                      void* userdata)
+void UncapturedError(WGPUDevice const* device, WGPUErrorType type,
+                     WGPUStringView message, void* userdata1, void* userdata2)
 {
-  switch (type)
-  {
-    case WGPULoggingType_Error:
-      std::cerr << "[WebGPU] Error: " << WGPUString(message) << std::endl;
-      break;
-    default:
-      std::cout << "[WebGPU] Info: " << WGPUString(message) << std::endl;
-      break;
-  }
+  std::cerr << "[WebGPU] " << WGPUString(message) << std::endl;
+}
+
+void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
+                  WGPUStringView message, void* userdata1, void* userdata2)
+{
+  std::cerr << "[WebGPU] Device Lost: " << WGPUString(message) << std::endl;
 }
 }  // namespace engine::wgpu
