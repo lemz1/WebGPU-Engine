@@ -23,6 +23,7 @@ class Window
  private:
   const GLFWContext& _context;
   GLFWwindow* _handle;
+  const char* _title;
   uint32_t _width;
   uint32_t _height;
 };
