@@ -33,7 +33,7 @@ jobs:
 
       - name: Remove Old Content From Dependencies
         shell: pwsh
-        working-directory: src
+        working-directory: dst
         run: |
           $foldersToRemove = @("dawn", "glfw", "glfw3webgpu")
           foreach ($folder in $foldersToRemove) {
