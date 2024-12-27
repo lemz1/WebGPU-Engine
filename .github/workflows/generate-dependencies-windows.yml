@@ -35,6 +35,7 @@ jobs:
         shell: pwsh
         run: |
           Get-ChildItem -Path dst -Recurse -Force | Where-Object { -not ($_.Name -like ".git*") } | Remove-Item -Recurse -Force
+          Get-ChildItem -Path dst -Recurse | ForEach-Object { Write-Output $_.FullName }
 
       # - name: Init Submodules
       #   working-directory: src
