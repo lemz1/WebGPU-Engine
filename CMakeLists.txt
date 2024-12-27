@@ -27,10 +27,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIR}")
 
 set(SOURCES
-  src/main.cpp
+    src/main.cpp
+    src/engine/wgpu/instance.cpp
+    src/engine/wgpu/adapter.cpp
+    src/engine/wgpu/surface.cpp
 )
 
 set(HEADERS
+    src/engine/wgpu/instance.h
+    src/engine/wgpu/adapter.h
+    src/engine/wgpu/surface.h
 )
 
 add_executable(WebGPU-Engine ${SOURCES} ${HEADERS})
