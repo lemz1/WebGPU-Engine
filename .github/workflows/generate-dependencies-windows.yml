@@ -66,6 +66,14 @@ jobs:
           }
           Copy-Item -Path src/dawn/install/Release/glfw -Destination dst/glfw -Recurse
 
+      - name: Copy GLFW WebGPU
+        shell: pwsh
+        run: |
+          if (Test-Path dst/glfw3webgpu) {
+            Remove-Item -Recurse -Force dst/glfw3webgpu
+          }
+          Copy-Item -Path src/glfw3webgpu -Destination dst/glfw3webgpu -Recurse
+
       - name: Push to dependencies branch
         working-directory: dst
         run: |
