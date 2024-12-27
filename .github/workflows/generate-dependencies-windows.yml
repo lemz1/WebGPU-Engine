@@ -33,9 +33,15 @@ jobs:
 
       - name: Remove Old Content From Dependencies
         shell: pwsh
+        working-directory: src
         run: |
-          Get-ChildItem -Path dst -Recurse -Force | Where-Object { -not ($_.Name -like ".git*") } | Remove-Item -Recurse -Force
-          Get-ChildItem -Path dst -Recurse | ForEach-Object { Write-Output $_.FullName }
+          $foldersToRemove = @("dawn", "glfw", "glfw3webgpu")
+          foreach ($folder in $foldersToRemove) {
+              $fullPath = Join-Path $PWD.Path $folder
+              if (Test-Path $fullPath) {
+                  Remove-Item -Path $fullPath -Recurse -Force
+              }
+          }
 
       # - name: Init Submodules
       #   working-directory: src
