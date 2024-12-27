@@ -34,22 +34,22 @@ jobs:
       - name: Init Submodules
         working-directory: src
         run: |
-          git submodule update --init --recursive
+          git submodule update --init
 
-      # - name: Build Dawn
-      #   working-directory: src/dawn
-      #   run: |
-      #     cmake -S . -B out/Release/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
-      #     cmake --build out/Release/webgpu --config Release
-      #     cmake --install out/Release/webgpu --prefix install/Release/webgpu
+      - name: Build Dawn
+        working-directory: src/dawn
+        run: |
+          cmake -S . -B out/Release/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake --build out/Release/webgpu --config Release
+          cmake --install out/Release/webgpu --prefix install/Release/webgpu
 
-      # - name: Copy Dawn Install
-      #   shell: pwsh
-      #   run: |
-      #     if (Test-Path dst/webgpu) {
-      #       Remove-Item -Recurse -Force dst/webgpu
-      #     }
-      #     Copy-Item -Path src/dawn/install/Release/webgpu -Destination dst/webgpu -Recurse
+      - name: Copy Dawn Install
+        shell: pwsh
+        run: |
+          if (Test-Path dst/webgpu) {
+            Remove-Item -Recurse -Force dst/webgpu
+          }
+          Copy-Item -Path src/dawn/install/Release/webgpu -Destination dst/webgpu -Recurse
 
       - name: Build GLFW
         working-directory: src/dawn
