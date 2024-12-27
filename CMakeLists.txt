@@ -33,6 +33,8 @@ set(SOURCES
     src/engine/wgpu/instance.cpp
     src/engine/wgpu/adapter.cpp
     src/engine/wgpu/surface.cpp
+    src/engine/wgpu/device.cpp
+    src/engine/wgpu/queue.cpp
 
     vnd/glfw3webgpu/glfw3webgpu.c
 )
@@ -43,6 +45,8 @@ set(HEADERS
     src/engine/wgpu/instance.h
     src/engine/wgpu/adapter.h
     src/engine/wgpu/surface.h
+    src/engine/wgpu/device.h
+    src/engine/wgpu/queue.h
 
     vnd/glfw3webgpu/glfw3webgpu.h
 )
