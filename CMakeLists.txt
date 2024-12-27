@@ -33,6 +33,8 @@ set(SOURCES
     src/engine/wgpu/instance.cpp
     src/engine/wgpu/adapter.cpp
     src/engine/wgpu/surface.cpp
+
+    vnd/glfw3webgpu/glfw3webgpu.c
 )
 
 set(HEADERS
@@ -41,17 +43,23 @@ set(HEADERS
     src/engine/wgpu/instance.h
     src/engine/wgpu/adapter.h
     src/engine/wgpu/surface.h
+
+    vnd/glfw3webgpu/glfw3webgpu.h
 )
 
 add_executable(WebGPU-Engine ${SOURCES} ${HEADERS})
 
 target_compile_definitions(WebGPU-Engine PUBLIC GLFW_INCLUDE_NONE)
 
+target_include_directories(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/src)
+
 target_include_directories(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/glfw/include)
 target_link_libraries(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/glfw/lib/glfw3.lib)
 
 target_include_directories(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/webgpu/include)
 target_link_libraries(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/webgpu/lib/webgpu_dawn.lib)
+
+target_include_directories(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/glfw3webgpu)
 
 add_custom_command(TARGET WebGPU-Engine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different

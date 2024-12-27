@@ -2,14 +2,16 @@
 
 #include <webgpu/webgpu.h>
 
-#include "instance.h"
+#include "engine/core/window.h"
+#include "engine/wgpu/instance.h"
 
 namespace engine::wgpu
 {
 class Surface
 {
  public:
-  explicit Surface(const Instance& instance);
+  explicit Surface(const Instance& instance,
+                   const engine::core::Window& window);
   ~Surface();
 
   operator WGPUSurface() const

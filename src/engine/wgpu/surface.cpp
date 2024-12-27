@@ -1,11 +1,12 @@
 #include "surface.h"
 
+#include <glfw3webgpu.h>
+
 namespace engine::wgpu
 {
-Surface::Surface(const Instance& instance)
+Surface::Surface(const Instance& instance, const engine::core::Window& window)
 {
-  WGPUSurfaceDescriptor descriptor{};
-  _handle = wgpuInstanceCreateSurface(instance, &descriptor);
+  _handle = glfwGetWGPUSurface(instance, window);
 }
 
 Surface::~Surface()

@@ -11,13 +11,10 @@ int main()
   auto instance = engine::wgpu::Instance();
   auto adapter = engine::wgpu::Adapter(instance);
 
-  WGPUAdapterInfo info{};
-  wgpuAdapterGetInfo(adapter, &info);
-
-  std::cout << "Vendor ID: " << info.vendorID << std::endl;
-
   auto glfwContext = engine::core::GLFWContext();
   auto window = engine::core::Window(glfwContext, 1280, 720, "WebGPU Engine");
+
+  auto surface = engine::wgpu::Surface(instance, window);
 
   while (!window.ShouldClose())
   {
