@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "engine/wgpu/util.h"
+
 namespace engine::wgpu
 {
 static void RequestAdapater(WGPURequestAdapterStatus status,
@@ -11,8 +13,7 @@ static void RequestAdapater(WGPURequestAdapterStatus status,
 Adapter::Adapter(const Instance& instance)
 {
   WGPURequestAdapterOptions options = {};
-  WGPURequestAdapterCallback callback = RequestAdapater;
-  wgpuInstanceRequestAdapter(instance, &options, callback, &_handle);
+  wgpuInstanceRequestAdapter(instance, &options, RequestAdapater, &_handle);
   if (!_handle)
   {
     std::cerr << "[WebGPU] Failed to request adapter!" << std::endl;
@@ -30,7 +31,8 @@ static void RequestAdapater(WGPURequestAdapterStatus status,
 {
   if (status != WGPURequestAdapterStatus_Success)
   {
-    std::cerr << "[WebGPU] Failed to get an adapter:" << message.data;
+    std::cerr << "[WebGPU] Failed to get an adapter:" << WGPUString(message)
+              << std::endl;
     return;
   }
   *static_cast<WGPUAdapter*>(userdata) = adapter;
