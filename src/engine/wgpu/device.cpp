@@ -85,12 +85,12 @@ static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
 void UncapturedError(WGPUDevice const* device, WGPUErrorType type,
                      WGPUStringView message, void* userdata1, void* userdata2)
 {
-  std::cerr << "[WebGPU] " << WGPUString(message) << std::endl;
+  std::cerr << "[WebGPU] " << WGPUToString(message) << std::endl;
 }
 
 void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
                   WGPUStringView message, void* userdata1, void* userdata2)
 {
-  std::cerr << "[WebGPU] Device Lost: " << WGPUString(message) << std::endl;
+  std::cerr << "[WebGPU] Device Lost: " << WGPUToString(message) << std::endl;
 }
 }  // namespace engine::wgpu

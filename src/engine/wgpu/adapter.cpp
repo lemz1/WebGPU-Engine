@@ -55,7 +55,7 @@ static void RequestAdapater(WGPURequestAdapterStatus status,
   data.finished = true;
   if (status != WGPURequestAdapterStatus_Success)
   {
-    std::cerr << "[WebGPU] Failed to get an adapter:" << WGPUString(message)
+    std::cerr << "[WebGPU] Failed to get an adapter:" << WGPUToString(message)
               << std::endl;
     return;
   }

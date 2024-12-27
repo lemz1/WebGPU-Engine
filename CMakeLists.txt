@@ -35,6 +35,8 @@ set(SOURCES
     src/engine/wgpu/surface.cpp
     src/engine/wgpu/device.cpp
     src/engine/wgpu/queue.cpp
+    src/engine/wgpu/command_buffer.cpp
+    src/engine/wgpu/command_encoder.cpp
 
     vnd/glfw3webgpu/glfw3webgpu.c
 )
@@ -47,6 +49,8 @@ set(HEADERS
     src/engine/wgpu/surface.h
     src/engine/wgpu/device.h
     src/engine/wgpu/queue.h
+    src/engine/wgpu/command_buffer.h
+    src/engine/wgpu/command_encoder.h
     src/engine/wgpu/util.h
 
     vnd/glfw3webgpu/glfw3webgpu.h
