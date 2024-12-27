@@ -2,6 +2,8 @@
 
 #include <webgpu/webgpu.h>
 
+#include <vector>
+
 namespace engine::wgpu
 {
 class Instance
@@ -9,6 +11,8 @@ class Instance
  public:
   explicit Instance();
   ~Instance();
+
+  void WaitAny(std::vector<WGPUFutureWaitInfo>& futures) const;
 
   operator WGPUInstance() const
   {

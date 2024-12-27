@@ -1,7 +1,10 @@
 #include "queue.h"
 
+#include <iostream>
+
 namespace engine::wgpu
 {
+static void QueueWorkDone(WGPUQueueWorkDoneStatus status, void*, void*);
 Queue::Queue(WGPUQueue handle) : _handle(handle)
 {
 }
@@ -17,14 +20,23 @@ Queue::~Queue()
   wgpuQueueRelease(_handle);
 }
 
-void Queue::Submit(const std::vector<const CommandBuffer*>& commands) const
+WGPUFuture Queue::Submit(const std::vector<WGPUCommandBuffer>& commands) const
 {
-  std::vector<WGPUCommandBuffer> handles;
-  handles.reserve(commands.size());
-  for (auto cmd : commands)
-  {
-    handles.emplace_back(*cmd);
-  }
-  wgpuQueueSubmit(_handle, handles.size(), handles.data());
+  wgpuQueueSubmit(_handle, commands.size(), commands.data());
+
+  WGPUQueueWorkDoneCallbackInfo2 info{
+      .nextInChain = nullptr,
+      .mode = WGPUCallbackMode_WaitAnyOnly,
+      .callback = QueueWorkDone,
+      .userdata1 = nullptr,
+      .userdata2 = nullptr,
+  };
+  return wgpuQueueOnSubmittedWorkDone2(_handle, info);
+}
+
+static void QueueWorkDone(WGPUQueueWorkDoneStatus status, void*, void*)
+{
+  std::cout << "[WebGPU] Finished queued work with status: " << status
+            << std::endl;
 }
 }  // namespace engine::wgpu

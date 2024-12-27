@@ -44,8 +44,11 @@ int main()
     auto command = engine::wgpu::CommandBuffer(encoder);
 
     std::cout << "Submitting command..." << std::endl;
-    queue.Submit({&command});
+    WGPUFuture future = queue.Submit({command});
     std::cout << "Command submitted." << std::endl;
+
+    std::vector<WGPUFutureWaitInfo> waitInfos = {{future}};
+    instance.WaitAny(waitInfos);
   }
 
   while (!window.ShouldClose())
