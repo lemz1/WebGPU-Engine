@@ -5,7 +5,12 @@
 # The glfw3webgpu target
 add_library(glfw3webgpu STATIC glfw3webgpu.c)
 target_include_directories(glfw3webgpu PUBLIC .)
-target_link_libraries(glfw3webgpu PUBLIC glfw webgpu)
+
+target_include_directories(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/glfw/include)
+target_link_libraries(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/glfw/lib/glfw3.lib)
+
+target_include_directories(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/webgpu/include)
+target_link_libraries(WebGPU-Engine PUBLIC ${CMAKE_SOURCE_DIR}/vnd/webgpu/lib/webgpu_dawn.lib)
 
 if (APPLE)
   target_compile_options(glfw3webgpu PRIVATE -x objective-c)
