@@ -47,6 +47,7 @@ set(HEADERS
     src/engine/wgpu/surface.h
     src/engine/wgpu/device.h
     src/engine/wgpu/queue.h
+    src/engine/wgpu/util.h
 
     vnd/glfw3webgpu/glfw3webgpu.h
 )

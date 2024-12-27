@@ -7,12 +7,25 @@
 #include "engine/wgpu/instance.h"
 #include "engine/wgpu/queue.h"
 #include "engine/wgpu/surface.h"
+#include "engine/wgpu/util.h"
 
 int main()
 {
   auto instance = engine::wgpu::Instance();
   auto adapter = engine::wgpu::Adapter(instance);
-  auto device = engine::wgpu::Device(adapter, {});
+
+  WGPUDeviceDescriptor deviceDescriptor{
+      .label = WGPUStringViewInit("Device"),
+      .requiredFeatureCount = 0,
+      .requiredFeatures = nullptr,
+      .defaultQueue =
+          {
+              .nextInChain = nullptr,
+              .label = WGPUStringViewInit("Default Queue"),
+          },
+  };
+
+  auto device = engine::wgpu::Device(adapter, &deviceDescriptor);
   auto queue = engine::wgpu::Queue::FromDevice(device);
 
   auto glfwContext = engine::core::GLFWContext();
