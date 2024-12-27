@@ -52,9 +52,9 @@ jobs:
       #     Copy-Item -Path src/dawn/install/Release/webgpu -Destination dst/webgpu -Recurse
 
       - name: Build GLFW
-        working-directory: src/glfw
+        working-directory: src/dawn
         run: |
-          cmake -S . -B out/Release/glfw -G "Visual Studio 17 2022" -DGLFW_INSTALL=ON -DGLFW_BUILD_DOCS=OFF -DGLFW_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake -S third_party/glfw -B out/Release/glfw -G "Visual Studio 17 2022" -DGLFW_INSTALL=ON -DGLFW_BUILD_DOCS=OFF -DGLFW_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
           cmake --build out/Release/glfw --config Release
           cmake --install out/Release/glfw --prefix install/Release/glfw
 
