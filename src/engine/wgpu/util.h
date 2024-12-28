@@ -17,3 +17,18 @@
   }
 
 #define WGPUToString(view) std::string(view.data, view.length)
+
+// #define DefaultWrapperContent(name)                  \
+//   explicit name(WGPU##name handle) : _handle(handle) \
+//   {                                                  \
+//   }                                                  \
+//                                                      \
+//   WGPU##name GetHandle()                             \
+//   {                                                  \
+//     return _handle;                                  \
+//   }                                                  \
+//                                                      \
+//   operator WGPU##name()                              \
+//   {                                                  \
+//     return _handle;                                  \
+//   }

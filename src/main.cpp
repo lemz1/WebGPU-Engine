@@ -8,6 +8,7 @@
 #include "engine/wgpu/device.h"
 #include "engine/wgpu/instance.h"
 #include "engine/wgpu/queue.h"
+#include "engine/wgpu/render_pass_encoder.h"
 #include "engine/wgpu/surface.h"
 #include "engine/wgpu/util.h"
 
@@ -59,22 +60,18 @@ int main()
     renderPassDesc.depthStencilAttachment = nullptr;
     renderPassDesc.timestampWrites = nullptr;
 
-    WGPURenderPassEncoder renderPass =
-        wgpuCommandEncoderBeginRenderPass(encoder, &renderPassDesc);
-
-    wgpuRenderPassEncoderEnd(renderPass);
-    wgpuRenderPassEncoderRelease(renderPass);
+    auto renderPass = engine::wgpu::RenderPassEncoder(encoder, &renderPassDesc);
+    renderPass.End();
 
     auto command = engine::wgpu::CommandBuffer(encoder);
 
     queue.Submit({command});
 
-    wgpuTextureViewRelease(textureView);
 #ifndef __EMSCRIPTEN__
-    wgpuSurfacePresent(surface);
+    surface.Present();
 #endif
 
-    wgpuDeviceTick(device);
+    device.Tick();
   }
 
   return 0;

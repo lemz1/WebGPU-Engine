@@ -5,9 +5,6 @@
 namespace engine::wgpu
 {
 static void QueueWorkDone(WGPUQueueWorkDoneStatus status, void*, void*);
-Queue::Queue(WGPUQueue handle) : _handle(handle)
-{
-}
 
 Queue Queue::FromDevice(const Device& device)
 {

@@ -69,6 +69,11 @@ Device::~Device()
   wgpuDeviceRelease(_handle);
 }
 
+void Device::Tick() const
+{
+  wgpuDeviceTick(_handle);
+}
+
 static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
                           WGPUStringView message, void* userdata)
 {

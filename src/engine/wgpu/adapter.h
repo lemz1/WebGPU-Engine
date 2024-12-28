@@ -9,8 +9,16 @@ namespace engine::wgpu
 class Adapter
 {
  public:
+  explicit Adapter(WGPUAdapter handle) : _handle(handle)
+  {
+  }
   explicit Adapter(const Instance& instance);
   ~Adapter();
+
+  WGPUAdapter GetHandle() const
+  {
+    return _handle;
+  }
 
   operator WGPUAdapter() const
   {

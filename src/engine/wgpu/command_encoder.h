@@ -11,6 +11,9 @@ namespace engine::wgpu
 class CommandEncoder
 {
  public:
+  explicit CommandEncoder(WGPUCommandEncoder handle) : _handle(handle)
+  {
+  }
   explicit CommandEncoder(const Device& device);
   ~CommandEncoder();
 

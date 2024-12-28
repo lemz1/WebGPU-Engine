@@ -9,6 +9,9 @@ namespace engine::wgpu
 class CommandBuffer
 {
  public:
+  explicit CommandBuffer(WGPUCommandBuffer handle) : _handle(handle)
+  {
+  }
   explicit CommandBuffer(const CommandEncoder& encoder);
   ~CommandBuffer();
 

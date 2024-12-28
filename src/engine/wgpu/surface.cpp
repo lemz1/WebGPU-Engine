@@ -32,14 +32,14 @@ Surface::~Surface()
   wgpuSurfaceRelease(_handle);
 }
 
-WGPUTextureView Surface::GetNextTextureView() const
+TextureView Surface::GetNextTextureView() const
 {
   WGPUSurfaceTexture surfaceTexture;
   wgpuSurfaceGetCurrentTexture(_handle, &surfaceTexture);
 
   if (surfaceTexture.status != WGPUSurfaceGetCurrentTextureStatus_Success)
   {
-    return nullptr;
+    std::terminate();
   }
 
   WGPUTextureViewDescriptor viewDescriptor{
@@ -59,6 +59,11 @@ WGPUTextureView Surface::GetNextTextureView() const
 
   wgpuTextureRelease(surfaceTexture.texture);
 
-  return textureView;
+  return TextureView(textureView);
+}
+
+void Surface::Present() const
+{
+  wgpuSurfacePresent(_handle);
 }
 }  // namespace engine::wgpu

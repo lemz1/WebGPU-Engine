@@ -11,6 +11,9 @@ namespace engine::wgpu
 class Queue
 {
  public:
+  explicit Queue(WGPUQueue handle) : _handle(handle)
+  {
+  }
   static Queue FromDevice(const Device& device);
   ~Queue();
 
@@ -26,9 +29,6 @@ class Queue
   {
     return _handle;
   }
-
- private:
-  explicit Queue(WGPUQueue handle);
 
  private:
   WGPUQueue _handle;
