@@ -51,7 +51,7 @@ jobs:
       - name: Build Dawn
         working-directory: src/dawn
         run: |
-          cmake -S . -B out/Release/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake -S . -B out/Release/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DDAWN_BUILD_TESTS=OFF -DDAWN_BUILD_SAMPLES=OFF -DTINT_BUILD_TESTS=OFF -DTINT_ENABLE_INSTALL=ON -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
           cmake --build out/Release/webgpu --config Release
           cmake --install out/Release/webgpu --prefix install/Release/webgpu
 
