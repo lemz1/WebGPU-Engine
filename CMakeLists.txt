@@ -39,6 +39,8 @@ set(SOURCES
     src/engine/wgpu/command_encoder.cpp
     src/engine/wgpu/texture_view.cpp
     src/engine/wgpu/render_pass_encoder.cpp
+    src/engine/wgpu/render_pipeline.cpp
+    src/engine/wgpu/shader_module.cpp
 
     vnd/glfw3webgpu/glfw3webgpu.c
 )
@@ -55,6 +57,8 @@ set(HEADERS
     src/engine/wgpu/command_encoder.h
     src/engine/wgpu/texture_view.h
     src/engine/wgpu/render_pass_encoder.h
+    src/engine/wgpu/render_pipeline.h
+    src/engine/wgpu/shader_module.h
     src/engine/wgpu/util.h
 
     vnd/glfw3webgpu/glfw3webgpu.h

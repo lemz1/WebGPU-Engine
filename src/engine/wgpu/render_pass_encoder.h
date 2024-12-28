@@ -3,6 +3,7 @@
 #include <webgpu/webgpu.h>
 
 #include "engine/wgpu/command_encoder.h"
+#include "engine/wgpu/render_pipeline.h"
 
 namespace engine::wgpu
 {
@@ -17,6 +18,10 @@ class RenderPassEncoder
   ~RenderPassEncoder();
 
   void End() const;
+
+  void SetPipeline(const RenderPipeline& pipeline) const;
+  void Draw(uint32_t vertexCount, uint32_t instanceCount = 1,
+            uint32_t firstVertex = 0, uint32_t firstInstance = 0) const;
 
   WGPURenderPassEncoder GetHandle() const
   {

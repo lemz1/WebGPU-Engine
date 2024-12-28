@@ -19,6 +19,8 @@ class GLFWContext
 
   void PollEvents() const;
 
+  double GetTime() const;
+
   bool WindowShouldClose(GLFWwindow* handle) const;
 };
 }  // namespace engine::core

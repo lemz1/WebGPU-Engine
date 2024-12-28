@@ -38,6 +38,11 @@ void GLFWContext::PollEvents() const
   glfwPollEvents();
 }
 
+double GLFWContext::GetTime() const
+{
+  return glfwGetTime();
+}
+
 bool GLFWContext::WindowShouldClose(GLFWwindow* handle) const
 {
   return glfwWindowShouldClose(handle);
