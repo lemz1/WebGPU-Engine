@@ -14,7 +14,8 @@ class Queue
   static Queue FromDevice(const Device& device);
   ~Queue();
 
-  WGPUFuture Submit(const std::vector<WGPUCommandBuffer>& commands) const;
+  void Submit(const std::vector<WGPUCommandBuffer>& commands) const;
+  WGPUFuture SubmitFuture(const std::vector<WGPUCommandBuffer>& commands) const;
 
   WGPUQueue GetHandle() const
   {

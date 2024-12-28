@@ -20,7 +20,13 @@ Queue::~Queue()
   wgpuQueueRelease(_handle);
 }
 
-WGPUFuture Queue::Submit(const std::vector<WGPUCommandBuffer>& commands) const
+void Queue::Submit(const std::vector<WGPUCommandBuffer>& commands) const
+{
+  wgpuQueueSubmit(_handle, commands.size(), commands.data());
+}
+
+WGPUFuture Queue::SubmitFuture(
+    const std::vector<WGPUCommandBuffer>& commands) const
 {
   wgpuQueueSubmit(_handle, commands.size(), commands.data());
 

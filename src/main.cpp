@@ -33,27 +33,48 @@ int main()
   auto glfwContext = engine::core::GLFWContext();
   auto window = engine::core::Window(glfwContext, 1280, 720, "WebGPU Engine");
 
-  auto surface = engine::wgpu::Surface(instance, window);
-
-  {
-    auto encoder = engine::wgpu::CommandEncoder(device);
-
-    encoder.InsertDebugMarker("First");
-    encoder.InsertDebugMarker("Second");
-
-    auto command = engine::wgpu::CommandBuffer(encoder);
-
-    std::cout << "Submitting command..." << std::endl;
-    WGPUFuture future = queue.Submit({command});
-    std::cout << "Command submitted." << std::endl;
-
-    std::vector<WGPUFutureWaitInfo> waitInfos = {{future}};
-    instance.WaitAny(waitInfos);
-  }
+  auto surface = engine::wgpu::Surface(instance, device, window);
 
   while (!window.ShouldClose())
   {
     glfwContext.PollEvents();
+
+    auto textureView = surface.GetNextTextureView();
+
+    auto encoder = engine::wgpu::CommandEncoder(device);
+
+    WGPURenderPassDescriptor renderPassDesc = {};
+    renderPassDesc.nextInChain = nullptr;
+
+    WGPURenderPassColorAttachment renderPassColorAttachment = {};
+    renderPassColorAttachment.view = textureView;
+    renderPassColorAttachment.resolveTarget = nullptr;
+    renderPassColorAttachment.loadOp = WGPULoadOp_Clear;
+    renderPassColorAttachment.storeOp = WGPUStoreOp_Store;
+    renderPassColorAttachment.clearValue = WGPUColor{0.1, 0.1, 0.1, 1.0};
+    renderPassColorAttachment.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED;
+
+    renderPassDesc.colorAttachmentCount = 1;
+    renderPassDesc.colorAttachments = &renderPassColorAttachment;
+    renderPassDesc.depthStencilAttachment = nullptr;
+    renderPassDesc.timestampWrites = nullptr;
+
+    WGPURenderPassEncoder renderPass =
+        wgpuCommandEncoderBeginRenderPass(encoder, &renderPassDesc);
+
+    wgpuRenderPassEncoderEnd(renderPass);
+    wgpuRenderPassEncoderRelease(renderPass);
+
+    auto command = engine::wgpu::CommandBuffer(encoder);
+
+    queue.Submit({command});
+
+    wgpuTextureViewRelease(textureView);
+#ifndef __EMSCRIPTEN__
+    wgpuSurfacePresent(surface);
+#endif
+
+    wgpuDeviceTick(device);
   }
 
   return 0;
