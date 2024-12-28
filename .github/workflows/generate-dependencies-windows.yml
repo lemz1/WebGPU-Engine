@@ -51,7 +51,7 @@ jobs:
       - name: Build Dawn
         working-directory: src/dawn
         run: |
-          cmake -S . -B out/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DTINT_ENABLE_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake -S . -B out/webgpu -G "Visual Studio 17 2022" -DDAWN_FETCH_DEPENDENCIES=ON -DDAWN_ENABLE_INSTALL=ON -DTINT_ENABLE_INSTALL=ON -DDAWN_BUILD_TESTS=OFF -DTINT_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
           cmake --build out/webgpu --config Release
           cmake --install out/webgpu --prefix install/webgpu
 
@@ -63,7 +63,7 @@ jobs:
       - name: Build GLFW
         working-directory: src/dawn
         run: |
-          cmake -S third_party/glfw -B out/glfw -G "Visual Studio 17 2022" -DGLFW_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
+          cmake -S third_party/glfw -B out/glfw -G "Visual Studio 17 2022" -DGLFW_INSTALL=ON -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_VERSION="10.0.22621.0"
           cmake --build out/glfw --config Release
           cmake --install out/glfw --prefix install/glfw
 
