@@ -30,17 +30,26 @@ int main()
   auto surface = Surface(instance, adapter, device, window);
 
   std::vector<float> vertices = {
-    -0.5, -0.5, +0.0, +0.0,
-
-    +0.5, -0.5, +1.0, +0.0,
-
-    +0.0, +0.5, +0.0, +1.0,
+    -0.5, -0.5, +0.0, +0.0,  //
+    +0.5, -0.5, +1.0, +0.0,  //
+    -0.5, +0.5, +0.0, +1.0,  //
+    +0.5, +0.5, +1.0, +1.0,  //
   };
 
   auto vertexBuffer =
     engine::wgpu::Buffer(device, vertices.size() * sizeof(float),
                          WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex);
   queue.WriteBuffer(vertexBuffer, vertexBuffer.GetSize(), vertices.data());
+
+  std::vector<uint32_t> indices = {
+    0, 1, 2,  //
+    1, 3, 2,  //
+  };
+
+  auto indexBuffer =
+    engine::wgpu::Buffer(device, indices.size() * sizeof(uint32_t),
+                         WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index);
+  queue.WriteBuffer(indexBuffer, indexBuffer.GetSize(), indices.data());
 
   auto source = StrToWGPU(R"(
     struct VertexInput {
@@ -184,8 +193,9 @@ int main()
 
     RenderPassEncoder renderPass = encoder.BeginRenderPass(&renderPassDesc);
     renderPass.SetVertexBuffer(vertexBuffer, 0, vertexBuffer.GetSize());
+    renderPass.SetIndexBuffer(indexBuffer, indexBuffer.GetSize());
     renderPass.SetPipeline(pipeline);
-    renderPass.Draw(3);
+    renderPass.DrawIndexed(indices.size());
     renderPass.End();
 
     CommandBuffer command = encoder.Finish();

@@ -25,8 +25,15 @@ class RenderPassEncoder
   void SetVertexBuffer(const Buffer& buffer, uint32_t slot, uint64_t size,
                        uint64_t offset = 0) const;
 
+  void SetIndexBuffer(const Buffer& buffer, uint64_t size,
+                      WGPUIndexFormat format = WGPUIndexFormat_Uint32,
+                      uint64_t offset = 0) const;
+
   void Draw(uint32_t vertexCount, uint32_t instanceCount = 1,
             uint32_t firstVertex = 0, uint32_t firstInstance = 0) const;
+
+  void DrawIndexed(uint32_t indexCount, uint32_t instanceCount = 1,
+                   uint32_t firstIndex = 0, uint32_t firstInstance = 0) const;
 
   WGPURenderPassEncoder GetHandle() const
   {
