@@ -23,7 +23,7 @@ int main()
   auto instance = Instance();
   auto adapter = Adapter(instance);
   auto device = Device(adapter);
-  auto queue = Queue::FromDevice(device);
+  Queue queue = device.GetQueue();
 
   auto glfwContext = GLFWContext();
   auto window = Window(glfwContext, 1280, 720, "WebGPU Engine");

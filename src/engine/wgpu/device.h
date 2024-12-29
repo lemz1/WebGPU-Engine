@@ -6,6 +6,8 @@
 
 namespace engine::wgpu
 {
+class Queue;
+
 class Device
 {
  public:
@@ -16,6 +18,8 @@ class Device
   ~Device();
 
   void Tick() const;
+
+  Queue GetQueue() const;
 
   WGPUDevice GetHandle() const
   {

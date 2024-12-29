@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "engine/wgpu/buffer.h"
-#include "engine/wgpu/device.h"
 
 namespace engine::wgpu
 {
@@ -15,7 +14,6 @@ class Queue
   explicit Queue(WGPUQueue handle) : _handle(handle)
   {
   }
-  static Queue FromDevice(const Device& device);
   ~Queue();
 
   void Submit(const std::vector<WGPUCommandBuffer>& commands) const;

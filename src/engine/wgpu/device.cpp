@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "engine/wgpu/queue.h"
 #include "engine/wgpu/util.h"
 
 #ifdef __EMSCRIPTEN__
@@ -85,6 +86,11 @@ Device::~Device()
 void Device::Tick() const
 {
   wgpuDeviceTick(_handle);
+}
+
+Queue Device::GetQueue() const
+{
+  return Queue(wgpuDeviceGetQueue(_handle));
 }
 
 static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
