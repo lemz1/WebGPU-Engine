@@ -16,6 +16,7 @@
 #include "engine/wgpu/util.h"
 
 using namespace engine::wgpu;
+using namespace engine::core;
 
 int main()
 {
@@ -24,8 +25,8 @@ int main()
   auto device = Device(adapter);
   auto queue = Queue::FromDevice(device);
 
-  auto glfwContext = engine::core::GLFWContext();
-  auto window = engine::core::Window(glfwContext, 1280, 720, "WebGPU Engine");
+  auto glfwContext = GLFWContext();
+  auto window = Window(glfwContext, 1280, 720, "WebGPU Engine");
 
   auto surface = Surface(instance, adapter, device, window);
 
@@ -36,9 +37,8 @@ int main()
     +0.5, +0.5, +1.0, +1.0,  //
   };
 
-  auto vertexBuffer =
-    engine::wgpu::Buffer(device, vertices.size() * sizeof(float),
-                         WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex);
+  auto vertexBuffer = Buffer(device, vertices.size() * sizeof(float),
+                             WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex);
   queue.WriteBuffer(vertexBuffer, vertexBuffer.GetSize(), vertices.data());
 
   std::vector<uint32_t> indices = {
@@ -46,9 +46,8 @@ int main()
     1, 3, 2,  //
   };
 
-  auto indexBuffer =
-    engine::wgpu::Buffer(device, indices.size() * sizeof(uint32_t),
-                         WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index);
+  auto indexBuffer = Buffer(device, indices.size() * sizeof(uint32_t),
+                            WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index);
   queue.WriteBuffer(indexBuffer, indexBuffer.GetSize(), indices.data());
 
   auto source = StrToWGPU(R"(
