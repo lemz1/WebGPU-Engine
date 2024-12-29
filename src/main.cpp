@@ -38,7 +38,7 @@ int main()
   auto glfwContext = engine::core::GLFWContext();
   auto window = engine::core::Window(glfwContext, 1280, 720, "WebGPU Engine");
 
-  auto surface = Surface(instance, device, window);
+  auto surface = Surface(instance, adapter, device, window);
 
   auto source = StrToWGPU(R"(
     @vertex
@@ -100,7 +100,7 @@ int main()
   blendState.alpha.operation = WGPUBlendOperation_Add;
 
   WGPUColorTargetState colorTarget{};
-  colorTarget.format = WGPUTextureFormat_BGRA8Unorm;
+  colorTarget.format = surface.GetPreferredFormat();
   colorTarget.blend = &blendState;
   colorTarget.writeMask = WGPUColorWriteMask_All;
 

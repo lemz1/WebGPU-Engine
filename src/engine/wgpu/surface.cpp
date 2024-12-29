@@ -2,19 +2,32 @@
 
 #include <glfw3webgpu.h>
 
+#include <iostream>
+
 #include "engine/wgpu/util.h"
 
 namespace engine::wgpu
 {
-Surface::Surface(const Instance& instance, const Device& device,
-                 const engine::core::Window& window)
+Surface::Surface(const Instance& instance, const Adapter& adapter,
+                 const Device& device, const engine::core::Window& window)
 {
   _handle = glfwGetWGPUSurface(instance, window);
+
+  WGPUSurfaceCapabilities capabilities{};
+  if (wgpuSurfaceGetCapabilities(_handle, adapter, &capabilities) !=
+      WGPUStatus_Success)
+  {
+    std::cerr << "[WebGPU] Could not get Surface Capabilities" << std::endl;
+    return;
+  }
+
+  _formats.assign(capabilities.formats,
+                  capabilities.formats + capabilities.formatCount);
 
   WGPUSurfaceConfiguration config{
       .nextInChain = nullptr,
       .device = device,
-      .format = WGPUTextureFormat_BGRA8Unorm,
+      .format = GetPreferredFormat(),
       .usage = WGPUTextureUsage_RenderAttachment,
       .viewFormatCount = 0,
       .viewFormats = nullptr,
@@ -30,6 +43,11 @@ Surface::~Surface()
 {
   wgpuSurfaceUnconfigure(_handle);
   wgpuSurfaceRelease(_handle);
+}
+
+WGPUTextureFormat Surface::GetPreferredFormat() const
+{
+  return _formats[0];
 }
 
 TextureView Surface::GetNextTextureView() const
