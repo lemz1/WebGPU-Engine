@@ -23,18 +23,24 @@ void Queue::Submit(const std::vector<WGPUCommandBuffer>& commands) const
 }
 
 WGPUFuture Queue::SubmitFuture(
-    const std::vector<WGPUCommandBuffer>& commands) const
+  const std::vector<WGPUCommandBuffer>& commands) const
 {
   wgpuQueueSubmit(_handle, commands.size(), commands.data());
 
   WGPUQueueWorkDoneCallbackInfo2 info{
-      .nextInChain = nullptr,
-      .mode = WGPUCallbackMode_WaitAnyOnly,
-      .callback = QueueWorkDone,
-      .userdata1 = nullptr,
-      .userdata2 = nullptr,
+    .nextInChain = nullptr,
+    .mode = WGPUCallbackMode_WaitAnyOnly,
+    .callback = QueueWorkDone,
+    .userdata1 = nullptr,
+    .userdata2 = nullptr,
   };
   return wgpuQueueOnSubmittedWorkDone2(_handle, info);
+}
+
+void Queue::WriteBuffer(const Buffer& buffer, uint64_t size, const void* data,
+                        uint64_t offset) const
+{
+  wgpuQueueWriteBuffer(_handle, buffer, offset, data, size);
 }
 
 static void QueueWorkDone(WGPUQueueWorkDoneStatus status, void*, void*)

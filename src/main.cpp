@@ -3,6 +3,7 @@
 #include "engine/core/glfw_context.h"
 #include "engine/core/window.h"
 #include "engine/wgpu/adapter.h"
+#include "engine/wgpu/buffer.h"
 #include "engine/wgpu/command_buffer.h"
 #include "engine/wgpu/command_encoder.h"
 #include "engine/wgpu/device.h"
@@ -22,14 +23,14 @@ int main()
   auto adapter = Adapter(instance);
 
   WGPUDeviceDescriptor deviceDescriptor{
-      .label = StrToWGPU("Device"),
-      .requiredFeatureCount = 0,
-      .requiredFeatures = nullptr,
-      .defaultQueue =
-          {
-              .nextInChain = nullptr,
-              .label = StrToWGPU("Default Queue"),
-          },
+    .label = StrToWGPU("Device"),
+    .requiredFeatureCount = 0,
+    .requiredFeatures = nullptr,
+    .defaultQueue =
+      {
+        .nextInChain = nullptr,
+        .label = StrToWGPU("Default Queue"),
+      },
   };
   auto device = Device(adapter, deviceDescriptor);
 
@@ -40,31 +41,49 @@ int main()
 
   auto surface = Surface(instance, adapter, device, window);
 
+  std::vector<float> vertices = {
+    -0.5, -0.5, +0.0, +0.0,
+
+    +0.5, -0.5, +1.0, +0.0,
+
+    +0.0, +0.5, +0.0, +1.0,
+  };
+
+  auto vertexBuffer =
+    engine::wgpu::Buffer(device, vertices.size() * sizeof(float),
+                         WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex);
+  queue.WriteBuffer(vertexBuffer, vertexBuffer.GetSize(), vertices.data());
+
   auto source = StrToWGPU(R"(
+    struct VertexInput {
+      @location(0) position: vec2f,
+      @location(1) texCoord: vec2f,
+    };
+
+    struct VertexOutput {
+      @builtin(position) position: vec4f,
+      @location(0) texCoord: vec2f,
+    };
+
     @vertex
-    fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> @builtin(position) vec4f {
-        var p = vec2f(0.0, 0.0);
-        if (in_vertex_index == 0u) {
-            p = vec2f(-0.5, -0.5);
-        } else if (in_vertex_index == 1u) {
-            p = vec2f(0.5, -0.5);
-        } else {
-            p = vec2f(0.0, 0.5);
-        }
-        return vec4f(p, 0.0, 1.0);
+    fn vs_main(in: VertexInput) -> VertexOutput {
+      var out: VertexOutput;
+      out.position = vec4f(in.position, 0.0, 1.0);
+      out.texCoord = in.texCoord;
+      return out;
     }
 
     @fragment
-    fn fs_main() -> @location(0) vec4f {
-        return vec4f(0.0, 0.4, 1.0, 1.0);
+    fn fs_main(in: VertexOutput) -> @location(0) vec4f {
+        return vec4f(in.texCoord, 1.0, 1.0);
     }
   )");
 
   WGPUShaderSourceWGSL wgslSource{};
   wgslSource.code = source;
   wgslSource.chain = {
-      .next = nullptr,
-      .sType = WGPUSType_ShaderSourceWGSL,
+    .next = nullptr,
+    .sType = WGPUSType_ShaderSourceWGSL,
   };
 
   WGPUShaderModuleDescriptor shaderDesc{};
@@ -115,6 +134,31 @@ int main()
   pipelineDesc.multisample.alphaToCoverageEnabled = false;
   pipelineDesc.layout = nullptr;
 
+  // Vertex fetch
+  WGPUVertexBufferLayout vertexBufferLayout{};
+
+  std::vector<WGPUVertexAttribute> attributes = {
+    WGPUVertexAttribute{
+      .format = WGPUVertexFormat_Float32x2,
+      .offset = 0,
+      .shaderLocation = 0,
+    },
+    WGPUVertexAttribute{
+      .format = WGPUVertexFormat_Float32x2,
+      .offset = 2 * sizeof(float),
+      .shaderLocation = 1,
+    },
+  };
+
+  vertexBufferLayout.attributeCount = attributes.size();
+  vertexBufferLayout.attributes = attributes.data();
+
+  vertexBufferLayout.arrayStride = 4 * sizeof(float);
+  vertexBufferLayout.stepMode = WGPUVertexStepMode_Vertex;
+
+  pipelineDesc.vertex.bufferCount = 1;
+  pipelineDesc.vertex.buffers = &vertexBufferLayout;
+
   auto pipeline = RenderPipeline(device, &pipelineDesc);
 
   float time = 0.0f;
@@ -148,6 +192,7 @@ int main()
     renderPassDesc.timestampWrites = nullptr;
 
     RenderPassEncoder renderPass = encoder.BeginRenderPass(&renderPassDesc);
+    renderPass.SetVertexBuffer(vertexBuffer, 0, vertexBuffer.GetSize());
     renderPass.SetPipeline(pipeline);
     renderPass.Draw(3);
     renderPass.End();

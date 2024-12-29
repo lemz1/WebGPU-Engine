@@ -29,5 +29,6 @@ class Device
 
  private:
   WGPUDevice _handle;
+  WGPURequiredLimits _requiredLimits;
 };
 }  // namespace engine::wgpu

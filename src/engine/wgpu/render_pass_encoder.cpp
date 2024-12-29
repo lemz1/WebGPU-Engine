@@ -23,6 +23,12 @@ void RenderPassEncoder::SetPipeline(const RenderPipeline& pipeline) const
   wgpuRenderPassEncoderSetPipeline(_handle, pipeline);
 }
 
+void RenderPassEncoder::SetVertexBuffer(const Buffer& buffer, uint32_t slot,
+                                        uint64_t size, uint64_t offset) const
+{
+  wgpuRenderPassEncoderSetVertexBuffer(_handle, slot, buffer, offset, size);
+}
+
 void RenderPassEncoder::Draw(uint32_t vertexCount, uint32_t instanceCount,
                              uint32_t firstVertex, uint32_t firstInstance) const
 {

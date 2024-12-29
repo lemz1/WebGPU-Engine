@@ -2,6 +2,7 @@
 
 #include <webgpu/webgpu.h>
 
+#include "engine/wgpu/buffer.h"
 #include "engine/wgpu/command_encoder.h"
 #include "engine/wgpu/render_pipeline.h"
 
@@ -20,6 +21,10 @@ class RenderPassEncoder
   void End() const;
 
   void SetPipeline(const RenderPipeline& pipeline) const;
+
+  void SetVertexBuffer(const Buffer& buffer, uint32_t slot, uint64_t size,
+                       uint64_t offset = 0) const;
+
   void Draw(uint32_t vertexCount, uint32_t instanceCount = 1,
             uint32_t firstVertex = 0, uint32_t firstInstance = 0) const;
 

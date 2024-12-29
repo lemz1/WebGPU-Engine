@@ -11,8 +11,8 @@ namespace engine::wgpu
 CommandEncoder::CommandEncoder(const Device& device)
 {
   WGPUCommandEncoderDescriptor descriptor{
-      .nextInChain = nullptr,
-      .label = StrToWGPU("Command Encoder"),
+    .nextInChain = nullptr,
+    .label = StrToWGPU("Command Encoder"),
   };
   _handle = wgpuDeviceCreateCommandEncoder(device, &descriptor);
   if (!_handle)
@@ -37,7 +37,7 @@ CommandBuffer CommandEncoder::Finish() const
 }
 
 RenderPassEncoder CommandEncoder::BeginRenderPass(
-    const WGPURenderPassDescriptor* descriptor) const
+  const WGPURenderPassDescriptor* descriptor) const
 {
   return RenderPassEncoder(*this, descriptor);
 }

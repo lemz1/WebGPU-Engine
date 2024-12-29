@@ -25,16 +25,16 @@ Surface::Surface(const Instance& instance, const Adapter& adapter,
                   capabilities.formats + capabilities.formatCount);
 
   WGPUSurfaceConfiguration config{
-      .nextInChain = nullptr,
-      .device = device,
-      .format = GetPreferredFormat(),
-      .usage = WGPUTextureUsage_RenderAttachment,
-      .viewFormatCount = 0,
-      .viewFormats = nullptr,
-      .alphaMode = WGPUCompositeAlphaMode_Auto,
-      .width = 1280,
-      .height = 720,
-      .presentMode = WGPUPresentMode_Fifo,
+    .nextInChain = nullptr,
+    .device = device,
+    .format = GetPreferredFormat(),
+    .usage = WGPUTextureUsage_RenderAttachment,
+    .viewFormatCount = 0,
+    .viewFormats = nullptr,
+    .alphaMode = WGPUCompositeAlphaMode_Auto,
+    .width = 1280,
+    .height = 720,
+    .presentMode = WGPUPresentMode_Fifo,
   };
   wgpuSurfaceConfigure(_handle, &config);
 }
@@ -61,19 +61,19 @@ TextureView Surface::GetNextTextureView() const
   }
 
   WGPUTextureViewDescriptor viewDescriptor{
-      .nextInChain = nullptr,
-      .label = StrToWGPU("Surface texture view"),
-      .format = wgpuTextureGetFormat(surfaceTexture.texture),
-      .dimension = WGPUTextureViewDimension_2D,
-      .baseMipLevel = 0,
-      .mipLevelCount = 1,
-      .baseArrayLayer = 0,
-      .arrayLayerCount = 1,
-      .aspect = WGPUTextureAspect_All,
+    .nextInChain = nullptr,
+    .label = StrToWGPU("Surface texture view"),
+    .format = wgpuTextureGetFormat(surfaceTexture.texture),
+    .dimension = WGPUTextureViewDimension_2D,
+    .baseMipLevel = 0,
+    .mipLevelCount = 1,
+    .baseArrayLayer = 0,
+    .arrayLayerCount = 1,
+    .aspect = WGPUTextureAspect_All,
   };
 
   WGPUTextureView textureView =
-      wgpuTextureCreateView(surfaceTexture.texture, &viewDescriptor);
+    wgpuTextureCreateView(surfaceTexture.texture, &viewDescriptor);
 
   wgpuTextureRelease(surfaceTexture.texture);
 

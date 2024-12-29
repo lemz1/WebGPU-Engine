@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include "engine/wgpu/buffer.h"
 #include "engine/wgpu/device.h"
 
 namespace engine::wgpu
@@ -19,6 +20,9 @@ class Queue
 
   void Submit(const std::vector<WGPUCommandBuffer>& commands) const;
   WGPUFuture SubmitFuture(const std::vector<WGPUCommandBuffer>& commands) const;
+
+  void WriteBuffer(const Buffer& buffer, uint64_t size, const void* data,
+                   uint64_t offset = 0) const;
 
   WGPUQueue GetHandle() const
   {

@@ -9,8 +9,8 @@ namespace engine::wgpu
 CommandBuffer::CommandBuffer(const CommandEncoder& encoder)
 {
   WGPUCommandBufferDescriptor descriptor{
-      .nextInChain = nullptr,
-      .label = StrToWGPU("Command Buffer"),
+    .nextInChain = nullptr,
+    .label = StrToWGPU("Command Buffer"),
   };
   _handle = wgpuCommandEncoderFinish(encoder, &descriptor);
   if (!_handle)

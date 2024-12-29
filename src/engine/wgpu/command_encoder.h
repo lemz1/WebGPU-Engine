@@ -25,7 +25,7 @@ class CommandEncoder
   CommandBuffer Finish() const;
 
   RenderPassEncoder BeginRenderPass(
-      const WGPURenderPassDescriptor* descriptor) const;
+    const WGPURenderPassDescriptor* descriptor) const;
 
   WGPUCommandEncoder GetHandle() const
   {
