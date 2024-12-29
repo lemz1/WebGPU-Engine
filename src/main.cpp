@@ -14,10 +14,12 @@
 #include "engine/wgpu/surface.h"
 #include "engine/wgpu/util.h"
 
+using namespace engine::wgpu;
+
 int main()
 {
-  auto instance = engine::wgpu::Instance();
-  auto adapter = engine::wgpu::Adapter(instance);
+  auto instance = Instance();
+  auto adapter = Adapter(instance);
 
   WGPUDeviceDescriptor deviceDescriptor{
       .label = StrToWGPU("Device"),
@@ -29,14 +31,14 @@ int main()
               .label = StrToWGPU("Default Queue"),
           },
   };
-  auto device = engine::wgpu::Device(adapter, deviceDescriptor);
+  auto device = Device(adapter, deviceDescriptor);
 
-  auto queue = engine::wgpu::Queue::FromDevice(device);
+  auto queue = Queue::FromDevice(device);
 
   auto glfwContext = engine::core::GLFWContext();
   auto window = engine::core::Window(glfwContext, 1280, 720, "WebGPU Engine");
 
-  auto surface = engine::wgpu::Surface(instance, device, window);
+  auto surface = Surface(instance, device, window);
 
   auto source = StrToWGPU(R"(
     @vertex
@@ -68,7 +70,7 @@ int main()
   WGPUShaderModuleDescriptor shaderDesc{};
   shaderDesc.nextInChain = &wgslSource.chain;
 
-  auto shaderModule = engine::wgpu::ShaderModule(device, &shaderDesc);
+  auto shaderModule = ShaderModule(device, &shaderDesc);
 
   WGPURenderPipelineDescriptor pipelineDesc{};
   pipelineDesc.nextInChain = nullptr;
@@ -113,7 +115,7 @@ int main()
   pipelineDesc.multisample.alphaToCoverageEnabled = false;
   pipelineDesc.layout = nullptr;
 
-  auto pipeline = engine::wgpu::RenderPipeline(device, &pipelineDesc);
+  auto pipeline = RenderPipeline(device, &pipelineDesc);
 
   float time = 0.0f;
 
@@ -127,7 +129,7 @@ int main()
 
     auto textureView = surface.GetNextTextureView();
 
-    auto encoder = engine::wgpu::CommandEncoder(device);
+    auto encoder = CommandEncoder(device);
 
     WGPURenderPassDescriptor renderPassDesc = {};
     renderPassDesc.nextInChain = nullptr;
@@ -145,12 +147,12 @@ int main()
     renderPassDesc.depthStencilAttachment = nullptr;
     renderPassDesc.timestampWrites = nullptr;
 
-    auto renderPass = engine::wgpu::RenderPassEncoder(encoder, &renderPassDesc);
+    RenderPassEncoder renderPass = encoder.BeginRenderPass(&renderPassDesc);
     renderPass.SetPipeline(pipeline);
     renderPass.Draw(3);
     renderPass.End();
 
-    auto command = engine::wgpu::CommandBuffer(encoder);
+    CommandBuffer command = encoder.Finish();
 
     queue.Submit({command});
 

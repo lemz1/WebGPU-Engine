@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "engine/wgpu/command_buffer.h"
+#include "engine/wgpu/render_pass_encoder.h"
 #include "engine/wgpu/util.h"
 
 namespace engine::wgpu
@@ -27,5 +29,16 @@ CommandEncoder::~CommandEncoder()
 void CommandEncoder::InsertDebugMarker(std::string_view label) const
 {
   wgpuCommandEncoderInsertDebugMarker(_handle, ViewToWGPU(label));
+}
+
+CommandBuffer CommandEncoder::Finish() const
+{
+  return CommandBuffer(*this);
+}
+
+RenderPassEncoder CommandEncoder::BeginRenderPass(
+    const WGPURenderPassDescriptor* descriptor) const
+{
+  return RenderPassEncoder(*this, descriptor);
 }
 }  // namespace engine::wgpu

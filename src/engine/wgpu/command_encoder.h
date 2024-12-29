@@ -8,6 +8,9 @@
 
 namespace engine::wgpu
 {
+class CommandBuffer;
+class RenderPassEncoder;
+
 class CommandEncoder
 {
  public:
@@ -18,6 +21,11 @@ class CommandEncoder
   ~CommandEncoder();
 
   void InsertDebugMarker(std::string_view label) const;
+
+  CommandBuffer Finish() const;
+
+  RenderPassEncoder BeginRenderPass(
+      const WGPURenderPassDescriptor* descriptor) const;
 
   WGPUCommandEncoder GetHandle() const
   {
