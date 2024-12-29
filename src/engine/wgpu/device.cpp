@@ -29,30 +29,35 @@ static void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
 
 static WGPURequiredLimits GetRequiredLimits(const Adapter& adapter);
 
-Device::Device(const Adapter& adapter, WGPUDeviceDescriptor descriptor)
+Device::Device(const Adapter& adapter)
 {
-  if (descriptor.uncapturedErrorCallbackInfo2.callback == nullptr)
-  {
-    descriptor.uncapturedErrorCallbackInfo2.callback = UncapturedError;
-    descriptor.uncapturedErrorCallbackInfo2.nextInChain = nullptr;
-    descriptor.uncapturedErrorCallbackInfo2.userdata1 = nullptr;
-    descriptor.uncapturedErrorCallbackInfo2.userdata2 = nullptr;
-  }
+  _requiredLimits = GetRequiredLimits(adapter);
 
-  if (descriptor.deviceLostCallbackInfo2.callback == nullptr)
-  {
-    descriptor.deviceLostCallbackInfo2.callback = LostCallback;
-    descriptor.deviceLostCallbackInfo2.nextInChain = nullptr;
-    descriptor.deviceLostCallbackInfo2.mode = WGPUCallbackMode_WaitAnyOnly;
-    descriptor.deviceLostCallbackInfo2.userdata1 = nullptr;
-    descriptor.deviceLostCallbackInfo2.userdata2 = nullptr;
-  }
-
-  if (descriptor.requiredLimits == nullptr)
-  {
-    _requiredLimits = GetRequiredLimits(adapter);
-    descriptor.requiredLimits = &_requiredLimits;
-  }
+  WGPUDeviceDescriptor descriptor{
+    .nextInChain = nullptr,
+    .label = StrToWGPU("Device"),
+    .requiredLimits = &_requiredLimits,
+    .defaultQueue =
+      {
+        .nextInChain = nullptr,
+        .label = StrToWGPU("Default Queue"),
+      },
+    .deviceLostCallbackInfo2 =
+      {
+        .nextInChain = nullptr,
+        .mode = WGPUCallbackMode_WaitAnyOnly,
+        .callback = LostCallback,
+        .userdata1 = nullptr,
+        .userdata2 = nullptr,
+      },
+    .uncapturedErrorCallbackInfo2 =
+      {
+        .nextInChain = nullptr,
+        .callback = UncapturedError,
+        .userdata1 = nullptr,
+        .userdata2 = nullptr,
+      },
+  };
 
   DeviceUserData data{};
   wgpuAdapterRequestDevice(adapter, &descriptor, RequestDevice, &data);
@@ -107,7 +112,7 @@ void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
   std::cerr << "[WebGPU] Device Lost: " << WGPUToString(message) << std::endl;
 }
 
-static WGPURequiredLimits GetRequiredLimits(const Adapter& adapter)
+WGPURequiredLimits GetRequiredLimits(const Adapter& adapter)
 {
   WGPUSupportedLimits supportedLimits{
     .nextInChain = nullptr,

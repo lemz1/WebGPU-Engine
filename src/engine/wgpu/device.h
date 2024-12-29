@@ -12,7 +12,7 @@ class Device
   explicit Device(WGPUDevice handle) : _handle(handle)
   {
   }
-  explicit Device(const Adapter& adapter, WGPUDeviceDescriptor descriptor);
+  explicit Device(const Adapter& adapter);
   ~Device();
 
   void Tick() const;

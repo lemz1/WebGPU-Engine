@@ -21,19 +21,7 @@ int main()
 {
   auto instance = Instance();
   auto adapter = Adapter(instance);
-
-  WGPUDeviceDescriptor deviceDescriptor{
-    .label = StrToWGPU("Device"),
-    .requiredFeatureCount = 0,
-    .requiredFeatures = nullptr,
-    .defaultQueue =
-      {
-        .nextInChain = nullptr,
-        .label = StrToWGPU("Default Queue"),
-      },
-  };
-  auto device = Device(adapter, deviceDescriptor);
-
+  auto device = Device(adapter);
   auto queue = Queue::FromDevice(device);
 
   auto glfwContext = engine::core::GLFWContext();
@@ -88,6 +76,7 @@ int main()
 
   WGPUShaderModuleDescriptor shaderDesc{};
   shaderDesc.nextInChain = &wgslSource.chain;
+  shaderDesc.label = StrToWGPU("Shader Module");
 
   auto shaderModule = ShaderModule(device, &shaderDesc);
 
@@ -133,6 +122,7 @@ int main()
   pipelineDesc.multisample.mask = ~0u;
   pipelineDesc.multisample.alphaToCoverageEnabled = false;
   pipelineDesc.layout = nullptr;
+  pipelineDesc.label = StrToWGPU("Pipeline");
 
   // Vertex fetch
   WGPUVertexBufferLayout vertexBufferLayout{};
@@ -190,6 +180,7 @@ int main()
     renderPassDesc.colorAttachments = &renderPassColorAttachment;
     renderPassDesc.depthStencilAttachment = nullptr;
     renderPassDesc.timestampWrites = nullptr;
+    renderPassDesc.label = StrToWGPU("Render Pass");
 
     RenderPassEncoder renderPass = encoder.BeginRenderPass(&renderPassDesc);
     renderPass.SetVertexBuffer(vertexBuffer, 0, vertexBuffer.GetSize());
