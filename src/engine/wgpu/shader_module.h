@@ -1,32 +1,17 @@
-#pragma once
+#ifndef FL_SHADER_MODULE_HEADER_DEFINE
+#define FL_SHADER_MODULE_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
 #include "engine/wgpu/device.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class ShaderModule
-{
- public:
-  explicit ShaderModule(WGPUShaderModule handle) : _handle(handle)
-  {
-  }
-  explicit ShaderModule(const Device& device,
-                        const WGPUShaderModuleDescriptor* descriptor);
-  ~ShaderModule();
+  WGPUShaderModule handle;
+} FL_ShaderModule;
 
-  WGPUShaderModule GetHandle() const
-  {
-    return _handle;
-  }
+FL_ShaderModule FL_ShaderModuleCreate(
+  const FL_Device* device, const WGPUShaderModuleDescriptor* descriptor);
+void FL_ShaderModuleRelease(FL_ShaderModule* shaderModule);
 
-  operator WGPUShaderModule() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUShaderModule _handle;
-};
-}  // namespace engine::wgpu
+#endif

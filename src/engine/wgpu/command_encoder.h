@@ -1,43 +1,23 @@
-#pragma once
+#ifndef FL_COMMAND_ENCODER_HEADER_DEFINE
+#define FL_COMMAND_ENCODER_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
-#include <string>
-
+#include "engine/wgpu/command_buffer.h"
 #include "engine/wgpu/device.h"
+#include "engine/wgpu/render_pass_encoder.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class CommandBuffer;
-class RenderPassEncoder;
+  WGPUCommandEncoder handle;
+} FL_CommandEncoder;
 
-class CommandEncoder
-{
- public:
-  explicit CommandEncoder(WGPUCommandEncoder handle) : _handle(handle)
-  {
-  }
-  explicit CommandEncoder(const Device& device);
-  ~CommandEncoder();
+FL_CommandEncoder FL_CommandEncoderCreate(const FL_Device* device);
+void FL_CommandEncoderRelease(FL_CommandEncoder* encoder);
 
-  void InsertDebugMarker(std::string_view label) const;
+FL_CommandBuffer FL_CommandEncoderFinish(const FL_CommandEncoder* encoder);
 
-  CommandBuffer Finish() const;
+FL_RenderPassEncoder FL_CommandEncoderBeginRenderPass(
+  const FL_CommandEncoder* encoder, const WGPURenderPassDescriptor* descriptor);
 
-  RenderPassEncoder BeginRenderPass(
-    const WGPURenderPassDescriptor* descriptor) const;
-
-  WGPUCommandEncoder GetHandle() const
-  {
-    return _handle;
-  }
-
-  operator WGPUCommandEncoder() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUCommandEncoder _handle;
-};
-}  // namespace engine::wgpu
+#endif

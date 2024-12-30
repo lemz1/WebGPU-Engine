@@ -1,38 +1,19 @@
-#pragma once
+#ifndef FL_DEVICE_HEADER_DEFINE
+#define FL_DEVICE_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
 #include "engine/wgpu/adapter.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class Queue;
+  WGPURequiredLimits requiredLimits;
+  WGPUDevice handle;
+} FL_Device;
 
-class Device
-{
- public:
-  explicit Device(WGPUDevice handle) : _handle(handle)
-  {
-  }
-  explicit Device(const Adapter& adapter);
-  ~Device();
+FL_Device FL_DeviceCreate(const FL_Adapter* adapter);
+void FL_DeviceRelease(FL_Device* device);
 
-  void Tick() const;
+void FL_DeviceTick(const FL_Device* device);
 
-  Queue GetQueue() const;
-
-  WGPUDevice GetHandle() const
-  {
-    return _handle;
-  }
-
-  operator WGPUDevice() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUDevice _handle;
-  WGPURequiredLimits _requiredLimits;
-};
-}  // namespace engine::wgpu
+#endif

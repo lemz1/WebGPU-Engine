@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(WebGPU-Engine)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_STANDARD 20)
+set(CMAKE_C_STANDARD_REQUIRED True)
 
 set(OUTPUT_DIR_PLATFORM "unknown")
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -27,27 +27,25 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIR}")
 
 set(SOURCES
-    src/main.cpp
-    src/engine/core/glfw_context.cpp
-    src/engine/core/window.cpp
-    src/engine/wgpu/instance.cpp
-    src/engine/wgpu/adapter.cpp
-    src/engine/wgpu/surface.cpp
-    src/engine/wgpu/device.cpp
-    src/engine/wgpu/queue.cpp
-    src/engine/wgpu/command_buffer.cpp
-    src/engine/wgpu/command_encoder.cpp
-    src/engine/wgpu/texture_view.cpp
-    src/engine/wgpu/render_pass_encoder.cpp
-    src/engine/wgpu/render_pipeline.cpp
-    src/engine/wgpu/shader_module.cpp
-    src/engine/wgpu/buffer.cpp
+    src/main.c
+    src/engine/core/window.c
+    src/engine/wgpu/instance.c
+    src/engine/wgpu/adapter.c
+    src/engine/wgpu/surface.c
+    src/engine/wgpu/device.c
+    src/engine/wgpu/queue.c
+    src/engine/wgpu/command_buffer.c
+    src/engine/wgpu/command_encoder.c
+    src/engine/wgpu/texture_view.c
+    src/engine/wgpu/render_pass_encoder.c
+    src/engine/wgpu/render_pipeline.c
+    src/engine/wgpu/shader_module.c
+    src/engine/wgpu/buffer.c
 
     vnd/glfw3webgpu/glfw3webgpu.c
 )
 
 set(HEADERS
-    src/engine/core/glfw_context.h
     src/engine/core/window.h
     src/engine/wgpu/instance.h
     src/engine/wgpu/adapter.h

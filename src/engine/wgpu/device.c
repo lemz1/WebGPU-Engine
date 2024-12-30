@@ -1,6 +1,7 @@
 #include "device.h"
 
-#include <iostream>
+#include <stdbool.h>
+#include <stdio.h>
 
 #include "engine/wgpu/queue.h"
 #include "engine/wgpu/util.h"
@@ -9,13 +10,11 @@
 #include <emscripten.h>
 #endif
 
-namespace engine::wgpu
+typedef struct
 {
-struct DeviceUserData
-{
-  bool finished = false;
-  WGPUDevice device = nullptr;
-};
+  WGPUDevice device;
+  bool finished;
+} FL_DeviceUserData;
 
 static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
                           WGPUStringView message, void* userdata);
@@ -28,40 +27,43 @@ static void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
                          struct WGPUStringView message, void* userdata1,
                          void* userdata2);
 
-static WGPURequiredLimits GetRequiredLimits(const Adapter& adapter);
+static WGPURequiredLimits GetRequiredLimits(const FL_Adapter* adapter);
 
-Device::Device(const Adapter& adapter)
+FL_Device FL_DeviceCreate(const FL_Adapter* adapter)
 {
-  _requiredLimits = GetRequiredLimits(adapter);
+  WGPURequiredLimits requiredLimits = GetRequiredLimits(adapter);
 
-  WGPUDeviceDescriptor descriptor{
-    .nextInChain = nullptr,
-    .label = StrToWGPU("Device"),
-    .requiredLimits = &_requiredLimits,
+  WGPUDeviceDescriptor descriptor = {
+    .nextInChain = NULL,
+    .label = FL_StrToWGPU("Device"),
+    .requiredLimits = &requiredLimits,
     .defaultQueue =
       {
-        .nextInChain = nullptr,
-        .label = StrToWGPU("Default Queue"),
+        .nextInChain = NULL,
+        .label = FL_StrToWGPU("Default Queue"),
       },
     .deviceLostCallbackInfo2 =
       {
-        .nextInChain = nullptr,
+        .nextInChain = NULL,
         .mode = WGPUCallbackMode_WaitAnyOnly,
         .callback = LostCallback,
-        .userdata1 = nullptr,
-        .userdata2 = nullptr,
+        .userdata1 = NULL,
+        .userdata2 = NULL,
       },
     .uncapturedErrorCallbackInfo2 =
       {
-        .nextInChain = nullptr,
+        .nextInChain = NULL,
         .callback = UncapturedError,
-        .userdata1 = nullptr,
-        .userdata2 = nullptr,
+        .userdata1 = NULL,
+        .userdata2 = NULL,
       },
   };
 
-  DeviceUserData data{};
-  wgpuAdapterRequestDevice(adapter, &descriptor, RequestDevice, &data);
+  FL_DeviceUserData data = {
+    .device = NULL,
+    .finished = false,
+  };
+  wgpuAdapterRequestDevice(adapter->handle, &descriptor, RequestDevice, &data);
 
 #ifdef __EMSCRIPTEN__
   while (!data.finished)
@@ -72,61 +74,67 @@ Device::Device(const Adapter& adapter)
 
   if (!data.device)
   {
-    std::cerr << "[WebGPU] Could not request Device" << std::endl;
-    return;
+    perror("[WebGPU] Could not request Device\n");
+    return (FL_Device){0};
   }
-  _handle = data.device;
+  WGPUDevice handle = data.device;
+
+  return (FL_Device){
+    .requiredLimits = requiredLimits,
+    .handle = handle,
+  };
 }
 
-Device::~Device()
+void FL_DeviceRelease(FL_Device* device)
 {
-  wgpuDeviceRelease(_handle);
+  wgpuDeviceRelease(device->handle);
 }
 
-void Device::Tick() const
+void FL_DeviceTick(const FL_Device* device)
 {
-  wgpuDeviceTick(_handle);
+  wgpuDeviceTick(device->handle);
 }
 
-Queue Device::GetQueue() const
+FL_Queue FL_DeviceGetQueue(const FL_Device* device)
 {
-  return Queue(wgpuDeviceGetQueue(_handle));
+  return FL_QueueCreate(wgpuDeviceGetQueue(device->handle));
 }
 
 static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
                           WGPUStringView message, void* userdata)
 {
-  auto& data = *static_cast<DeviceUserData*>(userdata);
-  data.finished = true;
+  FL_DeviceUserData* data = (FL_DeviceUserData*)userdata;
+  data->finished = true;
   if (status != WGPURequestDeviceStatus_Success)
   {
-    std::cerr << "[WebGPU] Failed to get a Device" << std::endl;
+    fprintf(stderr, "[WebGPU] Failed to get a Device: %.*s\n",
+            (int)message.length, message.data);
     return;
   }
-  data.device = device;
+  data->device = device;
 }
 
 void UncapturedError(WGPUDevice const* device, WGPUErrorType type,
                      WGPUStringView message, void* userdata1, void* userdata2)
 {
-  std::cerr << "[WebGPU] " << WGPUToString(message) << std::endl;
+  fprintf(stderr, "[WEBGPU]: %.*s\n", (int)message.length, message.data);
 }
 
 void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
                   WGPUStringView message, void* userdata1, void* userdata2)
 {
-  std::cerr << "[WebGPU] Device Lost: " << WGPUToString(message) << std::endl;
+  printf("[WebGPU] Device Lost %.*s\n", (int)message.length, message.data);
 }
 
-WGPURequiredLimits GetRequiredLimits(const Adapter& adapter)
+WGPURequiredLimits GetRequiredLimits(const FL_Adapter* adapter)
 {
-  WGPUSupportedLimits supportedLimits{
-    .nextInChain = nullptr,
+  WGPUSupportedLimits supportedLimits = {
+    .nextInChain = NULL,
   };
-  wgpuAdapterGetLimits(adapter, &supportedLimits);
+  wgpuAdapterGetLimits(adapter->handle, &supportedLimits);
 
-  WGPURequiredLimits requiredLimits{
-    .nextInChain = nullptr,
+  WGPURequiredLimits requiredLimits = {
+    .nextInChain = NULL,
     .limits =
       {
         .maxTextureDimension1D = WGPU_LIMIT_U32_UNDEFINED,
@@ -172,4 +180,3 @@ WGPURequiredLimits GetRequiredLimits(const Adapter& adapter)
 
   return requiredLimits;
 }
-}  // namespace engine::wgpu
