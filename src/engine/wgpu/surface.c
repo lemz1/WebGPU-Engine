@@ -11,6 +11,11 @@ FL_Surface FL_SurfaceCreate(const FL_Instance* instance,
                             const FL_Window* window)
 {
   WGPUSurface handle = glfwGetWGPUSurface(instance->handle, window->handle);
+  if (!handle)
+  {
+    perror("[WebGPU] Could not create Surface\n");
+    return (FL_Surface){0};
+  }
 
   WGPUSurfaceCapabilities capabilities;
   if (wgpuSurfaceGetCapabilities(handle, adapter->handle, &capabilities) !=

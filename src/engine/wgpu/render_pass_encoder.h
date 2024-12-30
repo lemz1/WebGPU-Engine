@@ -38,4 +38,9 @@ void FL_RenderPassEncoderDrawIndexed(const FL_RenderPassEncoder* renderPass,
                                      uint32_t firstIndex,
                                      uint32_t firstInstance);
 
+void FL_RenderPassEncoderSetBindGroup(const FL_RenderPassEncoder* renderPass,
+                                      uint32_t groupIndex, WGPUBindGroup group,
+                                      size_t numOffsets,
+                                      const uint32_t* offsets);
+
 #endif

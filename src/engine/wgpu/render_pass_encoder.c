@@ -53,3 +53,12 @@ void FL_RenderPassEncoderDrawIndexed(const FL_RenderPassEncoder* renderPass,
   wgpuRenderPassEncoderDrawIndexed(renderPass->handle, indexCount,
                                    instanceCount, firstIndex, 0, firstInstance);
 }
+
+void FL_RenderPassEncoderSetBindGroup(const FL_RenderPassEncoder* renderPass,
+                                      uint32_t groupIndex, WGPUBindGroup group,
+                                      size_t numOffsets,
+                                      const uint32_t* offsets)
+{
+  wgpuRenderPassEncoderSetBindGroup(renderPass->handle, groupIndex, group,
+                                    numOffsets, offsets);
+}

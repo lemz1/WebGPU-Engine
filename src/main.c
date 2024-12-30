@@ -249,7 +249,7 @@ int main()
       &renderPass, &indexBuffer, indexBuffer.size, WGPUIndexFormat_Uint32, 0);
     FL_RenderPassEncoderSetPipeline(&renderPass, &pipeline);
 
-    wgpuRenderPassEncoderSetBindGroup(renderPass.handle, 0, bindGroup, 0, NULL);
+    FL_RenderPassEncoderSetBindGroup(&renderPass, 0, bindGroup, 0, NULL);
     FL_RenderPassEncoderDrawIndexed(&renderPass, 6, 1, 0, 0);
     FL_RenderPassEncoderEnd(&renderPass);
 

@@ -15,6 +15,7 @@ FL_CommandEncoder FL_CommandEncoderCreate(const FL_Device* device)
   if (!handle)
   {
     perror("[WebGPU] Could not create Command Encoder\n");
+    return (FL_CommandEncoder){0};
   }
 
   return (FL_CommandEncoder){.handle = handle};
