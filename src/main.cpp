@@ -50,6 +50,12 @@ int main()
                             WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index);
   queue.WriteBuffer(indexBuffer, indexBuffer.GetSize(), indices.data());
 
+  float uniformData = 0.0f;
+
+  auto uniformBuffer = Buffer(
+    device, sizeof(float), WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform);
+  queue.WriteBuffer(uniformBuffer, uniformBuffer.GetSize(), &uniformData);
+
   auto source = StrToWGPU(R"(
     struct VertexInput {
       @location(0) position: vec2f,
@@ -61,10 +67,12 @@ int main()
       @location(0) texCoord: vec2f,
     };
 
+    @group(0) @binding(0) var<uniform> uTime: f32;
+
     @vertex
     fn vs_main(in: VertexInput) -> VertexOutput {
       var out: VertexOutput;
-      out.position = vec4f(in.position, 0.0, 1.0);
+      out.position = vec4f(in.position.x, in.position.y + sin(uTime) * 0.5, 0.0, 1.0);
       out.texCoord = in.texCoord;
       return out;
     }
@@ -157,6 +165,41 @@ int main()
   pipelineDesc.vertex.bufferCount = 1;
   pipelineDesc.vertex.buffers = &vertexBufferLayout;
 
+  // Define binding layout
+  WGPUBindGroupLayoutEntry bindingLayout{};
+  bindingLayout.binding = 0;
+  bindingLayout.visibility = WGPUShaderStage_Vertex;
+  bindingLayout.buffer.type = WGPUBufferBindingType_Uniform;
+  bindingLayout.buffer.minBindingSize = sizeof(float);
+
+  WGPUBindGroupLayoutDescriptor bindGroupLayoutDesc{};
+  bindGroupLayoutDesc.entryCount = 1;
+  bindGroupLayoutDesc.entries = &bindingLayout;
+  WGPUBindGroupLayout bindGroupLayout =
+    wgpuDeviceCreateBindGroupLayout(device, &bindGroupLayoutDesc);
+
+  WGPUBindGroupEntry binding{};
+  binding.nextInChain = nullptr;
+  binding.binding = 0;
+  binding.buffer = uniformBuffer;
+  binding.offset = 0;
+  binding.size = sizeof(float);
+
+  WGPUBindGroupDescriptor bindGroupDesc{};
+  bindGroupDesc.nextInChain = nullptr;
+  bindGroupDesc.layout = bindGroupLayout;
+  bindGroupDesc.entryCount = 1;
+  bindGroupDesc.entries = &binding;
+  WGPUBindGroup bindGroup = wgpuDeviceCreateBindGroup(device, &bindGroupDesc);
+
+  // Create the pipeline layout
+  WGPUPipelineLayoutDescriptor layoutDesc{};
+  layoutDesc.bindGroupLayoutCount = 1;
+  layoutDesc.bindGroupLayouts = (WGPUBindGroupLayout*)&bindGroupLayout;
+  WGPUPipelineLayout layout =
+    wgpuDeviceCreatePipelineLayout(device, &layoutDesc);
+  pipelineDesc.layout = layout;
+
   auto pipeline = RenderPipeline(device, &pipelineDesc);
 
   float time = 0.0f;
@@ -170,6 +213,8 @@ int main()
     time = newTime;
 
     auto textureView = surface.GetNextTextureView();
+
+    queue.WriteBuffer(uniformBuffer, uniformBuffer.GetSize(), &time);
 
     auto encoder = CommandEncoder(device);
 
@@ -194,6 +239,7 @@ int main()
     renderPass.SetVertexBuffer(vertexBuffer, 0, vertexBuffer.GetSize());
     renderPass.SetIndexBuffer(indexBuffer, indexBuffer.GetSize());
     renderPass.SetPipeline(pipeline);
+    wgpuRenderPassEncoderSetBindGroup(renderPass, 0, bindGroup, 0, nullptr);
     renderPass.DrawIndexed(indices.size());
     renderPass.End();
 
