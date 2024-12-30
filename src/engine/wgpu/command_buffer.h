@@ -1,31 +1,14 @@
-#pragma once
+#ifndef FL_COMMAND_BUFFER_HEADER_DEFINE
+#define FL_COMMAND_BUFFER_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
-#include "engine/wgpu/command_encoder.h"
-
-namespace engine::wgpu
+typedef struct
 {
-class CommandBuffer
-{
- public:
-  explicit CommandBuffer(WGPUCommandBuffer handle) : _handle(handle)
-  {
-  }
-  explicit CommandBuffer(const CommandEncoder& encoder);
-  ~CommandBuffer();
+  WGPUCommandBuffer handle;
+} FL_CommandBuffer;
 
-  WGPUCommandBuffer GetHandle() const
-  {
-    return _handle;
-  }
+FL_CommandBuffer FL_CommandBufferCreate(WGPUCommandBuffer handle);
+void FL_CommandBufferRelease(FL_CommandBuffer* command);
 
-  operator WGPUCommandBuffer() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUCommandBuffer _handle;
-};
-}  // namespace engine::wgpu
+#endif

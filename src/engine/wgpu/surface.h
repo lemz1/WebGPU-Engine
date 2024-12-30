@@ -1,8 +1,7 @@
-#pragma once
+#ifndef FL_SURFACE_HEADER_DEFINE
+#define FL_SURFACE_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
-
-#include <vector>
 
 #include "engine/core/window.h"
 #include "engine/wgpu/adapter.h"
@@ -10,36 +9,19 @@
 #include "engine/wgpu/instance.h"
 #include "engine/wgpu/texture_view.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class Surface
-{
- public:
-  explicit Surface(WGPUSurface handle) : _handle(handle)
-  {
-  }
-  explicit Surface(const Instance& instance, const Adapter& adapter,
-                   const Device& device, const engine::core::Window& window);
-  ~Surface();
+  WGPUSurface handle;
+  WGPUTextureFormat format;
+} FL_Surface;
 
-  WGPUTextureFormat GetPreferredFormat() const;
+FL_Surface FL_SurfaceCreate(const FL_Instance* instance,
+                            const FL_Adapter* adapter, const FL_Device* device,
+                            const FL_Window* window);
+void FL_SurfaceRelease(FL_Surface* surface);
 
-  TextureView GetNextTextureView() const;
+FL_TextureView FL_SurfaceGetNextTextureView(const FL_Surface* surface);
 
-  void Present() const;
+void FL_SurfacePresent(const FL_Surface* surface);
 
-  WGPUSurface GetHandle() const
-  {
-    return _handle;
-  }
-
-  operator WGPUSurface() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUSurface _handle;
-  std::vector<WGPUTextureFormat> _formats;
-};
-}  // namespace engine::wgpu
+#endif

@@ -1,33 +1,14 @@
-#pragma once
+#ifndef FL_INSTANCE_HEADER_DEFINE
+#define FL_INSTANCE_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
-#include <vector>
-
-namespace engine::wgpu
+typedef struct
 {
-class Instance
-{
- public:
-  explicit Instance(WGPUInstance handle) : _handle(handle)
-  {
-  }
-  explicit Instance();
-  ~Instance();
+  WGPUInstance handle;
+} FL_Instance;
 
-  void WaitAny(std::vector<WGPUFutureWaitInfo>& futures) const;
+FL_Instance FL_InstanceCreate();
+void FL_InstanceRelease(FL_Instance* instance);
 
-  WGPUInstance GetHandle() const
-  {
-    return _handle;
-  }
-
-  operator WGPUInstance() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUInstance _handle;
-};
-}  // namespace engine::wgpu
+#endif

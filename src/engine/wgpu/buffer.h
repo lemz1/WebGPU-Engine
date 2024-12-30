@@ -1,37 +1,18 @@
-#pragma once
+#ifndef FL_BUFFER_HEADER_DEFINE
+#define FL_BUFFER_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
 #include "engine/wgpu/device.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class Buffer
-{
- public:
-  explicit Buffer(WGPUBuffer handle) : _handle(handle)
-  {
-  }
-  explicit Buffer(const Device& device, uint64_t size, WGPUBufferUsage usage);
-  ~Buffer();
+  uint64_t size;
+  WGPUBuffer handle;
+} FL_Buffer;
 
-  WGPUBuffer GetHandle() const
-  {
-    return _handle;
-  }
+FL_Buffer FL_BufferCreate(const FL_Device* device, uint64_t size,
+                          WGPUBufferUsage usage);
+void FL_BufferRelease(FL_Buffer* buffer);
 
-  operator WGPUBuffer() const
-  {
-    return _handle;
-  }
-
-  uint64_t GetSize() const
-  {
-    return _size;
-  }
-
- private:
-  WGPUBuffer _handle;
-  uint64_t _size;
-};
-}  // namespace engine::wgpu
+#endif

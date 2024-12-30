@@ -1,38 +1,25 @@
-#pragma once
+#ifndef FL_QUEUE_HEADER_DEFINE
+#define FL_QUEUE_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
-#include <vector>
-
 #include "engine/wgpu/buffer.h"
+#include "engine/wgpu/device.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class Queue
-{
- public:
-  explicit Queue(WGPUQueue handle) : _handle(handle)
-  {
-  }
-  ~Queue();
+  WGPUQueue handle;
+} FL_Queue;
 
-  void Submit(const std::vector<WGPUCommandBuffer>& commands) const;
-  WGPUFuture SubmitFuture(const std::vector<WGPUCommandBuffer>& commands) const;
+FL_Queue FL_QueueCreate(WGPUQueue handle);
+void FL_QueueRelease(FL_Queue* queue);
 
-  void WriteBuffer(const Buffer& buffer, uint64_t size, const void* data,
-                   uint64_t offset = 0) const;
+void FL_QueueSubmit(const FL_Queue* queue, size_t numCommands,
+                    const WGPUCommandBuffer* commands);
 
-  WGPUQueue GetHandle() const
-  {
-    return _handle;
-  }
+void FL_QueueWriteBuffer(const FL_Queue* queue, const FL_Buffer* buffer,
+                         uint64_t size, const void* data, uint64_t offset);
 
-  operator WGPUQueue() const
-  {
-    return _handle;
-  }
+FL_Queue FL_DeviceGetQueue(const FL_Device* device);
 
- private:
-  WGPUQueue _handle;
-};
-}  // namespace engine::wgpu
+#endif

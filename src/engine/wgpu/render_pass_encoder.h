@@ -1,51 +1,41 @@
-#pragma once
+#ifndef FL_RENDER_PASS_ENCODER_HEADER_DEFINE
+#define FL_RENDER_PASS_ENCODER_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
 #include "engine/wgpu/buffer.h"
-#include "engine/wgpu/command_encoder.h"
 #include "engine/wgpu/render_pipeline.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class RenderPassEncoder
-{
- public:
-  explicit RenderPassEncoder(WGPURenderPassEncoder handle) : _handle(handle)
-  {
-  }
-  explicit RenderPassEncoder(const CommandEncoder& encoder,
-                             const WGPURenderPassDescriptor* descriptor);
-  ~RenderPassEncoder();
+  WGPURenderPassEncoder handle;
+} FL_RenderPassEncoder;
 
-  void End() const;
+FL_RenderPassEncoder FL_RenderPassEncoderCreate(WGPURenderPassEncoder handle);
+void FL_RenderPassEncoderRelease(FL_RenderPassEncoder* renderPass);
 
-  void SetPipeline(const RenderPipeline& pipeline) const;
+void FL_RenderPassEncoderEnd(const FL_RenderPassEncoder* renderPass);
 
-  void SetVertexBuffer(const Buffer& buffer, uint32_t slot, uint64_t size,
-                       uint64_t offset = 0) const;
+void FL_RenderPassEncoderSetPipeline(const FL_RenderPassEncoder* renderPass,
+                                     const FL_RenderPipeline* pipeline);
 
-  void SetIndexBuffer(const Buffer& buffer, uint64_t size,
-                      WGPUIndexFormat format = WGPUIndexFormat_Uint32,
-                      uint64_t offset = 0) const;
+void FL_RenderPassEncoderSetVertexBuffer(const FL_RenderPassEncoder* renderPass,
+                                         const FL_Buffer* buffer, uint32_t slot,
+                                         uint64_t size, uint64_t offset);
 
-  void Draw(uint32_t vertexCount, uint32_t instanceCount = 1,
-            uint32_t firstVertex = 0, uint32_t firstInstance = 0) const;
+void FL_RenderPassEncoderSetIndexBuffer(const FL_RenderPassEncoder* renderPass,
+                                        const FL_Buffer* buffer, uint64_t size,
+                                        WGPUIndexFormat format,
+                                        uint64_t offset);
 
-  void DrawIndexed(uint32_t indexCount, uint32_t instanceCount = 1,
-                   uint32_t firstIndex = 0, uint32_t firstInstance = 0) const;
+void FL_RenderPassEncoderDraw(const FL_RenderPassEncoder* renderPass,
+                              uint32_t vertexCount, uint32_t instanceCount,
+                              uint32_t firstVertex, uint32_t firstInstance);
 
-  WGPURenderPassEncoder GetHandle() const
-  {
-    return _handle;
-  }
+void FL_RenderPassEncoderDrawIndexed(const FL_RenderPassEncoder* renderPass,
+                                     uint32_t indexCount,
+                                     uint32_t instanceCount,
+                                     uint32_t firstIndex,
+                                     uint32_t firstInstance);
 
-  operator WGPURenderPassEncoder() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPURenderPassEncoder _handle;
-};
-}  // namespace engine::wgpu
+#endif

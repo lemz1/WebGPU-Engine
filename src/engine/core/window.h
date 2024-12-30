@@ -1,30 +1,20 @@
-#pragma once
+#ifndef FL_WINDOW_HEADER_DEFINE
+#define FL_WINDOW_HEADER_DEFINE
 
 #include <GLFW/glfw3.h>
+#include <stdbool.h>
 
-#include "glfw_context.h"
-
-namespace engine::core
+typedef struct
 {
-class Window
-{
- public:
-  explicit Window(const GLFWContext& context, uint32_t width, uint32_t height,
-                  const char* title);
-  ~Window();
+  GLFWwindow* handle;
+  const char* title;
+  uint32_t width;
+  uint32_t height;
+} FL_Window;
 
-  operator GLFWwindow*() const
-  {
-    return _handle;
-  }
+FL_Window FL_WindowCreate(uint32_t width, uint32_t height, const char* title);
+void FL_WindowDestroy(FL_Window* window);
 
-  bool ShouldClose();
+bool FL_WindowShouldClose(const FL_Window* window);
 
- private:
-  const GLFWContext& _context;
-  GLFWwindow* _handle;
-  const char* _title;
-  uint32_t _width;
-  uint32_t _height;
-};
-}  // namespace engine::core
+#endif

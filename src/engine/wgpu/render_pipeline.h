@@ -1,32 +1,16 @@
-#pragma once
-
+#ifndef FL_RENDER_PIPELINE_HEADER_DEFINE
+#define FL_RENDER_PIPELINE_HEADER_DEFINE
 #include <webgpu/webgpu.h>
 
 #include "engine/wgpu/device.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class RenderPipeline
-{
- public:
-  explicit RenderPipeline(WGPURenderPipeline handle) : _handle(handle)
-  {
-  }
-  explicit RenderPipeline(const Device& device,
-                          const WGPURenderPipelineDescriptor* descriptor);
-  ~RenderPipeline();
+  WGPURenderPipeline handle;
+} FL_RenderPipeline;
 
-  WGPURenderPipeline GetHandle() const
-  {
-    return _handle;
-  }
+FL_RenderPipeline FL_RenderPipelineCreate(
+  const FL_Device* device, const WGPURenderPipelineDescriptor* descriptor);
+void FL_RenderPipelineRelease(FL_RenderPipeline* pipeline);
 
-  operator WGPURenderPipeline() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPURenderPipeline _handle;
-};
-}  // namespace engine::wgpu
+#endif

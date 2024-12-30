@@ -1,31 +1,16 @@
-#pragma once
+#ifndef FL_ADAPTER_HEADER_DEFINE
+#define FL_ADAPTER_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
-#include "instance.h"
+#include "engine/wgpu/instance.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class Adapter
-{
- public:
-  explicit Adapter(WGPUAdapter handle) : _handle(handle)
-  {
-  }
-  explicit Adapter(const Instance& instance);
-  ~Adapter();
+  WGPUAdapter handle;
+} FL_Adapter;
 
-  WGPUAdapter GetHandle() const
-  {
-    return _handle;
-  }
+FL_Adapter FL_AdapterCreate(const FL_Instance* instance);
+void FL_AdapterRelease(FL_Adapter* adapter);
 
-  operator WGPUAdapter() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUAdapter _handle;
-};
-}  // namespace engine::wgpu
+#endif

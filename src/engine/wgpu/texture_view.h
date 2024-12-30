@@ -1,30 +1,16 @@
-#pragma once
+#ifndef FL_TEXTURE_VIEW_HEADER_DEFINE
+#define FL_TEXTURE_VIEW_HEADER_DEFINE
 
 #include <webgpu/webgpu.h>
 
 #include "engine/wgpu/util.h"
 
-namespace engine::wgpu
+typedef struct
 {
-class TextureView
-{
- public:
-  explicit TextureView(WGPUTextureView handle) : _handle(handle)
-  {
-  }
-  ~TextureView();
+  WGPUTextureView handle;
+} FL_TextureView;
 
-  WGPUTextureView GetHandle() const
-  {
-    return _handle;
-  }
+FL_TextureView FL_TextureViewCreate(WGPUTextureView handle);
+void FL_TextureViewRelease(FL_TextureView* textureView);
 
-  operator WGPUTextureView() const
-  {
-    return _handle;
-  }
-
- private:
-  WGPUTextureView _handle;
-};
-}  // namespace engine::wgpu
+#endif
