@@ -3,11 +3,11 @@
 
 #include <webgpu/webgpu.h>
 
-#include "engine/core/window.h"
-#include "engine/wgpu/adapter.h"
-#include "engine/wgpu/device.h"
-#include "engine/wgpu/instance.h"
-#include "engine/wgpu/texture_view.h"
+#include "faceless/core/window.h"
+#include "faceless/wgpu/adapter.h"
+#include "faceless/wgpu/device.h"
+#include "faceless/wgpu/instance.h"
+#include "faceless/wgpu/texture_view.h"
 
 typedef struct
 {

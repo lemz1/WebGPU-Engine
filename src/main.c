@@ -1,18 +1,6 @@
 #include <stdio.h>
 
-#include "engine/core/window.h"
-#include "engine/wgpu/adapter.h"
-#include "engine/wgpu/buffer.h"
-#include "engine/wgpu/command_buffer.h"
-#include "engine/wgpu/command_encoder.h"
-#include "engine/wgpu/device.h"
-#include "engine/wgpu/instance.h"
-#include "engine/wgpu/queue.h"
-#include "engine/wgpu/render_pass_encoder.h"
-#include "engine/wgpu/render_pipeline.h"
-#include "engine/wgpu/shader_module.h"
-#include "engine/wgpu/surface.h"
-#include "engine/wgpu/util.h"
+#include "faceless.h"
 
 int main()
 {

@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "engine/wgpu/util.h"
+#include "faceless/wgpu/util.h"
 
 FL_CommandEncoder FL_CommandEncoderCreate(const FL_Device* device)
 {

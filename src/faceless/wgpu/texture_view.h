@@ -3,7 +3,7 @@
 
 #include <webgpu/webgpu.h>
 
-#include "engine/wgpu/util.h"
+#include "faceless/wgpu/util.h"
 
 typedef struct
 {

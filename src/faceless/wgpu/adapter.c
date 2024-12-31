@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "engine/wgpu/util.h"
+#include "faceless/wgpu/util.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>

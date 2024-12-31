@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "engine/wgpu/util.h"
+#include "faceless/wgpu/util.h"
 
 FL_Buffer
 FL_BufferCreate(const FL_Device* device, uint64_t size, WGPUBufferUsage usage)

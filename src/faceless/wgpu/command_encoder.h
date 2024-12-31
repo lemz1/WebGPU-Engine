@@ -3,9 +3,9 @@
 
 #include <webgpu/webgpu.h>
 
-#include "engine/wgpu/command_buffer.h"
-#include "engine/wgpu/device.h"
-#include "engine/wgpu/render_pass_encoder.h"
+#include "faceless/wgpu/command_buffer.h"
+#include "faceless/wgpu/device.h"
+#include "faceless/wgpu/render_pass_encoder.h"
 
 typedef struct
 {

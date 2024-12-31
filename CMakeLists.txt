@@ -28,38 +28,39 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIR}")
 
 set(SOURCES
     src/main.c
-    src/engine/core/window.c
-    src/engine/wgpu/instance.c
-    src/engine/wgpu/adapter.c
-    src/engine/wgpu/surface.c
-    src/engine/wgpu/device.c
-    src/engine/wgpu/queue.c
-    src/engine/wgpu/command_buffer.c
-    src/engine/wgpu/command_encoder.c
-    src/engine/wgpu/texture_view.c
-    src/engine/wgpu/render_pass_encoder.c
-    src/engine/wgpu/render_pipeline.c
-    src/engine/wgpu/shader_module.c
-    src/engine/wgpu/buffer.c
+    src/faceless/core/window.c
+    src/faceless/wgpu/instance.c
+    src/faceless/wgpu/adapter.c
+    src/faceless/wgpu/surface.c
+    src/faceless/wgpu/device.c
+    src/faceless/wgpu/queue.c
+    src/faceless/wgpu/command_buffer.c
+    src/faceless/wgpu/command_encoder.c
+    src/faceless/wgpu/texture_view.c
+    src/faceless/wgpu/render_pass_encoder.c
+    src/faceless/wgpu/render_pipeline.c
+    src/faceless/wgpu/shader_module.c
+    src/faceless/wgpu/buffer.c
 
     vnd/glfw3webgpu/glfw3webgpu.c
 )
 
 set(HEADERS
-    src/engine/core/window.h
-    src/engine/wgpu/instance.h
-    src/engine/wgpu/adapter.h
-    src/engine/wgpu/surface.h
-    src/engine/wgpu/device.h
-    src/engine/wgpu/queue.h
-    src/engine/wgpu/command_buffer.h
-    src/engine/wgpu/command_encoder.h
-    src/engine/wgpu/texture_view.h
-    src/engine/wgpu/render_pass_encoder.h
-    src/engine/wgpu/render_pipeline.h
-    src/engine/wgpu/shader_module.h
-    src/engine/wgpu/buffer.h
-    src/engine/wgpu/util.h
+    src/faceless/core/window.h
+    src/faceless/wgpu/instance.h
+    src/faceless/wgpu/adapter.h
+    src/faceless/wgpu/surface.h
+    src/faceless/wgpu/device.h
+    src/faceless/wgpu/queue.h
+    src/faceless/wgpu/command_buffer.h
+    src/faceless/wgpu/command_encoder.h
+    src/faceless/wgpu/texture_view.h
+    src/faceless/wgpu/render_pass_encoder.h
+    src/faceless/wgpu/render_pipeline.h
+    src/faceless/wgpu/shader_module.h
+    src/faceless/wgpu/buffer.h
+    src/faceless/wgpu/util.h
+    src/faceless.h
 
     vnd/glfw3webgpu/glfw3webgpu.h
 )

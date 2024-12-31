@@ -3,8 +3,8 @@
 
 #include <webgpu/webgpu.h>
 
-#include "engine/wgpu/buffer.h"
-#include "engine/wgpu/render_pipeline.h"
+#include "faceless/wgpu/buffer.h"
+#include "faceless/wgpu/render_pipeline.h"
 
 typedef struct
 {

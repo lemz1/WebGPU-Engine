@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <webgpu/webgpu.h>
 
-#include "engine/wgpu/buffer.h"
-#include "engine/wgpu/device.h"
+#include "faceless/wgpu/buffer.h"
+#include "faceless/wgpu/device.h"
 
 typedef struct
 {
