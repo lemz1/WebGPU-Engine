@@ -2,6 +2,7 @@
 
 #include "engine/core/window.h"
 #include "engine/wgpu/adapter.h"
+#include "engine/wgpu/bind_group.h"
 #include "engine/wgpu/buffer.h"
 #include "engine/wgpu/command_buffer.h"
 #include "engine/wgpu/command_encoder.h"
@@ -170,41 +171,39 @@ int main()
   pipelineDesc.vertex.bufferCount = 1;
   pipelineDesc.vertex.buffers = &vertexBufferLayout;
 
-  WGPUBindGroupLayoutEntry bindingLayout = {0};
-  bindingLayout.binding = 0;
-  bindingLayout.visibility = WGPUShaderStage_Vertex;
-  bindingLayout.buffer.type = WGPUBufferBindingType_Uniform;
-  bindingLayout.buffer.minBindingSize = sizeof(float);
+  WGPUBindGroupLayoutEntry bindingLayout = {
+    .binding = 0,
+    .visibility = WGPUShaderStage_Vertex,
+    .buffer =
+      {
+        .type = WGPUBufferBindingType_Uniform,
+        .minBindingSize = sizeof(float),
+        .hasDynamicOffset = false,
+      },
+  };
 
-  WGPUBindGroupLayoutDescriptor bindGroupLayoutDesc = {0};
-  bindGroupLayoutDesc.entryCount = 1;
-  bindGroupLayoutDesc.entries = &bindingLayout;
-  WGPUBindGroupLayout bindGroupLayout =
-    wgpuDeviceCreateBindGroupLayout(device.handle, &bindGroupLayoutDesc);
+  WGPUBindGroupEntry binding = {
+    .binding = 0,
+    .buffer = uniformBuffer.handle,
+    .offset = 0,
+    .size = sizeof(float),
+  };
 
-  WGPUBindGroupEntry binding = {0};
-  binding.nextInChain = NULL;
-  binding.binding = 0;
-  binding.buffer = uniformBuffer.handle;
-  binding.offset = 0;
-  binding.size = sizeof(float);
+  FL_BindGroup bindGroup =
+    FL_BindGroupCreate(&device, 1, &bindingLayout, &binding);
 
-  WGPUBindGroupDescriptor bindGroupDesc = {0};
-  bindGroupDesc.nextInChain = NULL;
-  bindGroupDesc.layout = bindGroupLayout;
-  bindGroupDesc.entryCount = 1;
-  bindGroupDesc.entries = &binding;
-  WGPUBindGroup bindGroup =
-    wgpuDeviceCreateBindGroup(device.handle, &bindGroupDesc);
+  WGPUPipelineLayoutDescriptor layoutDesc = {
+    .bindGroupLayoutCount = 1,
+    .bindGroupLayouts = &bindGroup.layout,
+    .label = FL_StrToWGPU("Pipeline Layout"),
+  };
 
-  WGPUPipelineLayoutDescriptor layoutDesc = {0};
-  layoutDesc.bindGroupLayoutCount = 1;
-  layoutDesc.bindGroupLayouts = &bindGroupLayout;
   WGPUPipelineLayout layout =
     wgpuDeviceCreatePipelineLayout(device.handle, &layoutDesc);
   pipelineDesc.layout = layout;
 
   FL_RenderPipeline pipeline = FL_RenderPipelineCreate(&device, &pipelineDesc);
+  wgpuPipelineLayoutRelease(layout);
 
   float time = 0.0f;
 
@@ -249,7 +248,7 @@ int main()
       &renderPass, &indexBuffer, indexBuffer.size, WGPUIndexFormat_Uint32, 0);
     FL_RenderPassEncoderSetPipeline(&renderPass, &pipeline);
 
-    FL_RenderPassEncoderSetBindGroup(&renderPass, 0, bindGroup, 0, NULL);
+    FL_RenderPassEncoderSetBindGroup(&renderPass, 0, bindGroup.handle, 0, NULL);
     FL_RenderPassEncoderDrawIndexed(&renderPass, 6, 1, 0, 0);
     FL_RenderPassEncoderEnd(&renderPass);
 

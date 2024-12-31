@@ -41,6 +41,7 @@ set(SOURCES
     src/engine/wgpu/render_pipeline.c
     src/engine/wgpu/shader_module.c
     src/engine/wgpu/buffer.c
+    src/engine/wgpu/bind_group.c
 
     vnd/glfw3webgpu/glfw3webgpu.c
 )
@@ -59,6 +60,7 @@ set(HEADERS
     src/engine/wgpu/render_pipeline.h
     src/engine/wgpu/shader_module.h
     src/engine/wgpu/buffer.h
+    src/engine/wgpu/bind_group.h
     src/engine/wgpu/util.h
 
     vnd/glfw3webgpu/glfw3webgpu.h
