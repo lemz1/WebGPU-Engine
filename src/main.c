@@ -2,7 +2,6 @@
 
 #include "engine/core/window.h"
 #include "engine/wgpu/adapter.h"
-#include "engine/wgpu/bind_group.h"
 #include "engine/wgpu/buffer.h"
 #include "engine/wgpu/command_buffer.h"
 #include "engine/wgpu/command_encoder.h"
@@ -59,7 +58,7 @@ int main()
   FL_QueueWriteBuffer(&queue, &uniformBuffer, uniformBuffer.size, &uniformData,
                       0);
 
-  WGPUStringView source = FL_StrToWGPU(
+  const char* source =
     "struct VertexInput {\n"
     "  @location(0) position: vec2f,\n"
     "@location(1) texCoord: vec2f,\n"
@@ -84,126 +83,43 @@ int main()
     "@fragment\n"
     "fn fs_main(in: VertexOutput) -> @location(0) vec4f {"
     "return vec4f(in.texCoord, 1.0, 1.0);"
-    "}");
+    "}";
 
-  WGPUShaderSourceWGSL wgslSource = {
-    .code = source,
-    .chain =
-      {
-        .next = NULL,
-        .sType = WGPUSType_ShaderSourceWGSL,
-      },
-  };
-
-  WGPUShaderModuleDescriptor shaderDesc = {
-    .nextInChain = &wgslSource.chain,
-    .label = FL_StrToWGPU("Shader Module"),
-  };
-
-  FL_ShaderModule shaderModule = FL_ShaderModuleCreate(&device, &shaderDesc);
-
-  WGPURenderPipelineDescriptor pipelineDesc = {0};
-  pipelineDesc.nextInChain = NULL;
-  pipelineDesc.vertex.bufferCount = 0;
-  pipelineDesc.vertex.buffers = NULL;
-  pipelineDesc.vertex.module = shaderModule.handle;
-  pipelineDesc.vertex.entryPoint = FL_StrToWGPU("vs_main");
-  pipelineDesc.vertex.constantCount = 0;
-  pipelineDesc.vertex.constants = NULL;
-  pipelineDesc.primitive.topology = WGPUPrimitiveTopology_TriangleList;
-  pipelineDesc.primitive.stripIndexFormat = WGPUIndexFormat_Undefined;
-  pipelineDesc.primitive.frontFace = WGPUFrontFace_CCW;
-  pipelineDesc.primitive.cullMode = WGPUCullMode_None;
-
-  WGPUFragmentState fragmentState = {0};
-  fragmentState.module = shaderModule.handle;
-  fragmentState.entryPoint = FL_StrToWGPU("fs_main");
-  fragmentState.constantCount = 0;
-  fragmentState.constants = NULL;
-
-  WGPUBlendState blendState = {0};
-  blendState.color.srcFactor = WGPUBlendFactor_SrcAlpha;
-  blendState.color.dstFactor = WGPUBlendFactor_OneMinusSrcAlpha;
-  blendState.color.operation = WGPUBlendOperation_Add;
-  blendState.alpha.srcFactor = WGPUBlendFactor_Zero;
-  blendState.alpha.dstFactor = WGPUBlendFactor_One;
-  blendState.alpha.operation = WGPUBlendOperation_Add;
-
-  WGPUColorTargetState colorTarget = {0};
-  colorTarget.format = surface.format;
-  colorTarget.blend = &blendState;
-  colorTarget.writeMask = WGPUColorWriteMask_All;
-
-  fragmentState.targetCount = 1;
-  fragmentState.targets = &colorTarget;
-
-  pipelineDesc.fragment = &fragmentState;
-
-  pipelineDesc.depthStencil = NULL;
-  pipelineDesc.multisample.count = 1;
-  pipelineDesc.multisample.mask = ~0u;
-  pipelineDesc.multisample.alphaToCoverageEnabled = false;
-  pipelineDesc.layout = NULL;
-  pipelineDesc.label = FL_StrToWGPU("Pipeline");
-
-  // Vertex fetch
-  WGPUVertexBufferLayout vertexBufferLayout = {0};
-
-  WGPUVertexAttribute attributes[2] = {
-    {
+  WGPUVertexAttribute vertexAttributes[2] = {
+    (WGPUVertexAttribute){
       .format = WGPUVertexFormat_Float32x2,
       .offset = 0,
       .shaderLocation = 0,
     },
-    {
+    (WGPUVertexAttribute){
       .format = WGPUVertexFormat_Float32x2,
       .offset = 2 * sizeof(float),
       .shaderLocation = 1,
     },
   };
 
-  vertexBufferLayout.attributeCount = 2;
-  vertexBufferLayout.attributes = attributes;
-
-  vertexBufferLayout.arrayStride = 4 * sizeof(float);
-  vertexBufferLayout.stepMode = WGPUVertexStepMode_Vertex;
-
-  pipelineDesc.vertex.bufferCount = 1;
-  pipelineDesc.vertex.buffers = &vertexBufferLayout;
-
-  WGPUBindGroupLayoutEntry bindingLayout = {
+  FL_RenderPipelineUniform vertexUniform = {
+    .buffer = &uniformBuffer,
     .binding = 0,
-    .visibility = WGPUShaderStage_Vertex,
-    .buffer =
-      {
-        .type = WGPUBufferBindingType_Uniform,
-        .minBindingSize = sizeof(float),
-        .hasDynamicOffset = false,
-      },
+    .stride = sizeof(float),
+    .hasDynamicOffset = false,
   };
 
-  WGPUBindGroupEntry binding = {
-    .binding = 0,
-    .buffer = uniformBuffer.handle,
-    .offset = 0,
-    .size = sizeof(float),
+  FL_RenderPipelineDescriptor pipelineDescriptor = {
+    .shader = source,
+    .vertexStride = 4 * sizeof(float),
+    .numVertexAttributes = 2,
+    .vertexAttributes = vertexAttributes,
+    .vertexUniform = &vertexUniform,
+    .fragmentUniform = NULL,
+    .topology = WGPUPrimitiveTopology_TriangleList,
+    .cullMode = WGPUCullMode_None,
+    .format = surface.format,
+    .useBlending = true,
   };
 
-  FL_BindGroup bindGroup =
-    FL_BindGroupCreate(&device, 1, &bindingLayout, &binding);
-
-  WGPUPipelineLayoutDescriptor layoutDesc = {
-    .bindGroupLayoutCount = 1,
-    .bindGroupLayouts = &bindGroup.layout,
-    .label = FL_StrToWGPU("Pipeline Layout"),
-  };
-
-  WGPUPipelineLayout layout =
-    wgpuDeviceCreatePipelineLayout(device.handle, &layoutDesc);
-  pipelineDesc.layout = layout;
-
-  FL_RenderPipeline pipeline = FL_RenderPipelineCreate(&device, &pipelineDesc);
-  wgpuPipelineLayoutRelease(layout);
+  FL_RenderPipeline pipeline =
+    FL_RenderPipelineCreate(&device, &pipelineDescriptor);
 
   float time = 0.0f;
 
@@ -248,7 +164,8 @@ int main()
       &renderPass, &indexBuffer, indexBuffer.size, WGPUIndexFormat_Uint32, 0);
     FL_RenderPassEncoderSetPipeline(&renderPass, &pipeline);
 
-    FL_RenderPassEncoderSetBindGroup(&renderPass, 0, bindGroup.handle, 0, NULL);
+    FL_RenderPassEncoderSetBindGroup(&renderPass, 0, pipeline.bindGroup, 0,
+                                     NULL);
     FL_RenderPassEncoderDrawIndexed(&renderPass, 6, 1, 0, 0);
     FL_RenderPassEncoderEnd(&renderPass);
 
@@ -268,7 +185,6 @@ int main()
   }
 
   FL_RenderPipelineRelease(&pipeline);
-  FL_ShaderModuleRelease(&shaderModule);
   FL_BufferRelease(&uniformBuffer);
   FL_BufferRelease(&indexBuffer);
   FL_BufferRelease(&vertexBuffer);
