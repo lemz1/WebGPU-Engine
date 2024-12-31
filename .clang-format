@@ -6,4 +6,9 @@ ContinuationIndentWidth: 2
 BreakBeforeBraces: Allman
 InsertNewlineAtEOF: true
 AllowShortFunctionsOnASingleLine: false
-
+BinPackParameters: false
+BinPackArguments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
+AlignAfterOpenBracket: BlockIndent
+InsertTrailingCommas: Wrapped

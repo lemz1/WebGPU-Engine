@@ -7,7 +7,9 @@
 #include "engine/wgpu/util.h"
 
 FL_RenderPipeline FL_RenderPipelineCreate(
-  const FL_Device* device, const FL_RenderPipelineDescriptor* descriptor)
+  const FL_Device* device,
+  const FL_RenderPipelineDescriptor* descriptor
+)
 {
   WGPUShaderSourceWGSL wgslSource = {
     .code = FL_StrToWGPU(descriptor->shader),

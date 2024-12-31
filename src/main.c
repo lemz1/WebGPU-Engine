@@ -31,32 +31,67 @@ int main()
   FL_Surface surface = FL_SurfaceCreate(&instance, &adapter, &device, &window);
 
   float vertices[16] = {
-    -0.5, -0.5, +0.0, +0.0,  //
-    +0.5, -0.5, +1.0, +0.0,  //
-    -0.5, +0.5, +0.0, +1.0,  //
-    +0.5, +0.5, +1.0, +1.0,  //
+    -0.5,
+    -0.5,
+    +0.0,
+    +0.0,
+    //
+    +0.5,
+    -0.5,
+    +1.0,
+    +0.0,
+    //
+    -0.5,
+    +0.5,
+    +0.0,
+    +1.0,
+    //
+    +0.5,
+    +0.5,
+    +1.0,
+    +1.0,
+    //
   };
 
-  FL_Buffer vertexBuffer =
-    FL_BufferCreate(&device, sizeof(vertices),
-                    WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex);
+  FL_Buffer vertexBuffer = FL_BufferCreate(
+    &device,
+    sizeof(vertices),
+    WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex
+  );
   FL_QueueWriteBuffer(&queue, &vertexBuffer, vertexBuffer.size, vertices, 0);
 
   uint32_t indices[6] = {
-    0, 1, 2,  //
-    1, 3, 2,  //
+    0,
+    1,
+    2,
+    //
+    1,
+    3,
+    2,
+    //
   };
 
   FL_Buffer indexBuffer = FL_BufferCreate(
-    &device, sizeof(indices), WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index);
+    &device,
+    sizeof(indices),
+    WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index
+  );
   FL_QueueWriteBuffer(&queue, &indexBuffer, indexBuffer.size, indices, 0);
 
   float uniformData = 0.0f;
 
   FL_Buffer uniformBuffer = FL_BufferCreate(
-    &device, sizeof(float), WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform);
-  FL_QueueWriteBuffer(&queue, &uniformBuffer, uniformBuffer.size, &uniformData,
-                      0);
+    &device,
+    sizeof(float),
+    WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform
+  );
+  FL_QueueWriteBuffer(
+    &queue,
+    &uniformBuffer,
+    uniformBuffer.size,
+    &uniformData,
+    0
+  );
 
   const char* source =
     "struct VertexInput {\n"
@@ -74,7 +109,8 @@ int main()
     "@vertex\n"
     "fn vs_main(in: VertexInput) -> VertexOutput {"
     "var out: VertexOutput;"
-    "out.position = vec4f(in.position.x, in.position.y + sin(uTime) * 0.5, "
+    "out.position = vec4f(in.position.x, in.position.y + "
+    "sin(uTime) * 0.5, "
     "0.0, 1.0);"
     "out.texCoord = in.texCoord;"
     "return out;"
@@ -158,14 +194,29 @@ int main()
     FL_RenderPassEncoder renderPass =
       FL_CommandEncoderBeginRenderPass(&encoder, &renderPassDesc);
 
-    FL_RenderPassEncoderSetVertexBuffer(&renderPass, &vertexBuffer, 0,
-                                        vertexBuffer.size, 0);
+    FL_RenderPassEncoderSetVertexBuffer(
+      &renderPass,
+      &vertexBuffer,
+      0,
+      vertexBuffer.size,
+      0
+    );
     FL_RenderPassEncoderSetIndexBuffer(
-      &renderPass, &indexBuffer, indexBuffer.size, WGPUIndexFormat_Uint32, 0);
+      &renderPass,
+      &indexBuffer,
+      indexBuffer.size,
+      WGPUIndexFormat_Uint32,
+      0
+    );
     FL_RenderPassEncoderSetPipeline(&renderPass, &pipeline);
 
-    FL_RenderPassEncoderSetBindGroup(&renderPass, 0, pipeline.bindGroup, 0,
-                                     NULL);
+    FL_RenderPassEncoderSetBindGroup(
+      &renderPass,
+      0,
+      pipeline.bindGroup,
+      0,
+      NULL
+    );
     FL_RenderPassEncoderDrawIndexed(&renderPass, 6, 1, 0, 0);
     FL_RenderPassEncoderEnd(&renderPass);
 

@@ -15,50 +15,95 @@ void FL_RenderPassEncoderEnd(const FL_RenderPassEncoder* renderPass)
   wgpuRenderPassEncoderEnd(renderPass->handle);
 }
 
-void FL_RenderPassEncoderSetPipeline(const FL_RenderPassEncoder* renderPass,
-                                     const FL_RenderPipeline* pipeline)
+void FL_RenderPassEncoderSetPipeline(
+  const FL_RenderPassEncoder* renderPass,
+  const FL_RenderPipeline* pipeline
+)
 {
   wgpuRenderPassEncoderSetPipeline(renderPass->handle, pipeline->handle);
 }
 
-void FL_RenderPassEncoderSetVertexBuffer(const FL_RenderPassEncoder* renderPass,
-                                         const FL_Buffer* buffer, uint32_t slot,
-                                         uint64_t size, uint64_t offset)
+void FL_RenderPassEncoderSetVertexBuffer(
+  const FL_RenderPassEncoder* renderPass,
+  const FL_Buffer* buffer,
+  uint32_t slot,
+  uint64_t size,
+  uint64_t offset
+)
 {
-  wgpuRenderPassEncoderSetVertexBuffer(renderPass->handle, slot, buffer->handle,
-                                       offset, size);
+  wgpuRenderPassEncoderSetVertexBuffer(
+    renderPass->handle,
+    slot,
+    buffer->handle,
+    offset,
+    size
+  );
 }
 
-void FL_RenderPassEncoderSetIndexBuffer(const FL_RenderPassEncoder* renderPass,
-                                        const FL_Buffer* buffer, uint64_t size,
-                                        WGPUIndexFormat format, uint64_t offset)
+void FL_RenderPassEncoderSetIndexBuffer(
+  const FL_RenderPassEncoder* renderPass,
+  const FL_Buffer* buffer,
+  uint64_t size,
+  WGPUIndexFormat format,
+  uint64_t offset
+)
 {
-  wgpuRenderPassEncoderSetIndexBuffer(renderPass->handle, buffer->handle,
-                                      format, offset, size);
+  wgpuRenderPassEncoderSetIndexBuffer(
+    renderPass->handle,
+    buffer->handle,
+    format,
+    offset,
+    size
+  );
 }
 
-void FL_RenderPassEncoderDraw(const FL_RenderPassEncoder* renderPass,
-                              uint32_t vertexCount, uint32_t instanceCount,
-                              uint32_t firstVertex, uint32_t firstInstance)
+void FL_RenderPassEncoderDraw(
+  const FL_RenderPassEncoder* renderPass,
+  uint32_t vertexCount,
+  uint32_t instanceCount,
+  uint32_t firstVertex,
+  uint32_t firstInstance
+)
 {
-  wgpuRenderPassEncoderDraw(renderPass->handle, vertexCount, instanceCount,
-                            firstVertex, firstInstance);
+  wgpuRenderPassEncoderDraw(
+    renderPass->handle,
+    vertexCount,
+    instanceCount,
+    firstVertex,
+    firstInstance
+  );
 }
-void FL_RenderPassEncoderDrawIndexed(const FL_RenderPassEncoder* renderPass,
-                                     uint32_t indexCount,
-                                     uint32_t instanceCount,
-                                     uint32_t firstIndex,
-                                     uint32_t firstInstance)
+void FL_RenderPassEncoderDrawIndexed(
+  const FL_RenderPassEncoder* renderPass,
+  uint32_t indexCount,
+  uint32_t instanceCount,
+  uint32_t firstIndex,
+  uint32_t firstInstance
+)
 {
-  wgpuRenderPassEncoderDrawIndexed(renderPass->handle, indexCount,
-                                   instanceCount, firstIndex, 0, firstInstance);
+  wgpuRenderPassEncoderDrawIndexed(
+    renderPass->handle,
+    indexCount,
+    instanceCount,
+    firstIndex,
+    0,
+    firstInstance
+  );
 }
 
-void FL_RenderPassEncoderSetBindGroup(const FL_RenderPassEncoder* renderPass,
-                                      uint32_t groupIndex, WGPUBindGroup group,
-                                      size_t numOffsets,
-                                      const uint32_t* offsets)
+void FL_RenderPassEncoderSetBindGroup(
+  const FL_RenderPassEncoder* renderPass,
+  uint32_t groupIndex,
+  WGPUBindGroup group,
+  size_t numOffsets,
+  const uint32_t* offsets
+)
 {
-  wgpuRenderPassEncoderSetBindGroup(renderPass->handle, groupIndex, group,
-                                    numOffsets, offsets);
+  wgpuRenderPassEncoderSetBindGroup(
+    renderPass->handle,
+    groupIndex,
+    group,
+    numOffsets,
+    offsets
+  );
 }

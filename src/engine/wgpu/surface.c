@@ -6,9 +6,12 @@
 
 #include "engine/wgpu/util.h"
 
-FL_Surface FL_SurfaceCreate(const FL_Instance* instance,
-                            const FL_Adapter* adapter, const FL_Device* device,
-                            const FL_Window* window)
+FL_Surface FL_SurfaceCreate(
+  const FL_Instance* instance,
+  const FL_Adapter* adapter,
+  const FL_Device* device,
+  const FL_Window* window
+)
 {
   WGPUSurface handle = glfwGetWGPUSurface(instance->handle, window->handle);
   if (!handle)

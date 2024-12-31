@@ -18,6 +18,8 @@ void FL_CommandEncoderRelease(FL_CommandEncoder* encoder);
 FL_CommandBuffer FL_CommandEncoderFinish(const FL_CommandEncoder* encoder);
 
 FL_RenderPassEncoder FL_CommandEncoderBeginRenderPass(
-  const FL_CommandEncoder* encoder, const WGPURenderPassDescriptor* descriptor);
+  const FL_CommandEncoder* encoder,
+  const WGPURenderPassDescriptor* descriptor
+);
 
 #endif

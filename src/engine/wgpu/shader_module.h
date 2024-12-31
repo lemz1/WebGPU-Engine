@@ -11,7 +11,9 @@ typedef struct
 } FL_ShaderModule;
 
 FL_ShaderModule FL_ShaderModuleCreate(
-  const FL_Device* device, const WGPUShaderModuleDescriptor* descriptor);
+  const FL_Device* device,
+  const WGPUShaderModuleDescriptor* descriptor
+);
 void FL_ShaderModuleRelease(FL_ShaderModule* shaderModule);
 
 #endif

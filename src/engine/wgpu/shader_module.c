@@ -3,7 +3,9 @@
 #include <stdio.h>
 
 FL_ShaderModule FL_ShaderModuleCreate(
-  const FL_Device* device, const WGPUShaderModuleDescriptor* descriptor)
+  const FL_Device* device,
+  const WGPUShaderModuleDescriptor* descriptor
+)
 {
   WGPUShaderModule handle =
     wgpuDeviceCreateShaderModule(device->handle, descriptor);

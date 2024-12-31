@@ -16,16 +16,28 @@ typedef struct
   bool finished;
 } FL_DeviceUserData;
 
-static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
-                          WGPUStringView message, void* userdata);
+static void RequestDevice(
+  WGPURequestDeviceStatus status,
+  WGPUDevice device,
+  WGPUStringView message,
+  void* userdata
+);
 
-static void UncapturedError(WGPUDevice const* device, WGPUErrorType type,
-                            struct WGPUStringView message, void* userdata1,
-                            void* userdata2);
+static void UncapturedError(
+  WGPUDevice const* device,
+  WGPUErrorType type,
+  struct WGPUStringView message,
+  void* userdata1,
+  void* userdata2
+);
 
-static void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
-                         struct WGPUStringView message, void* userdata1,
-                         void* userdata2);
+static void LostCallback(
+  WGPUDevice const* device,
+  WGPUDeviceLostReason reason,
+  struct WGPUStringView message,
+  void* userdata1,
+  void* userdata2
+);
 
 static WGPURequiredLimits GetRequiredLimits(const FL_Adapter* adapter);
 
@@ -100,28 +112,46 @@ FL_Queue FL_DeviceGetQueue(const FL_Device* device)
   return FL_QueueCreate(wgpuDeviceGetQueue(device->handle));
 }
 
-static void RequestDevice(WGPURequestDeviceStatus status, WGPUDevice device,
-                          WGPUStringView message, void* userdata)
+static void RequestDevice(
+  WGPURequestDeviceStatus status,
+  WGPUDevice device,
+  WGPUStringView message,
+  void* userdata
+)
 {
   FL_DeviceUserData* data = (FL_DeviceUserData*)userdata;
   data->finished = true;
   if (status != WGPURequestDeviceStatus_Success)
   {
-    fprintf(stderr, "[WebGPU] Failed to get a Device: %.*s\n",
-            (int)message.length, message.data);
+    fprintf(
+      stderr,
+      "[WebGPU] Failed to get a Device: %.*s\n",
+      (int)message.length,
+      message.data
+    );
     return;
   }
   data->device = device;
 }
 
-void UncapturedError(WGPUDevice const* device, WGPUErrorType type,
-                     WGPUStringView message, void* userdata1, void* userdata2)
+void UncapturedError(
+  WGPUDevice const* device,
+  WGPUErrorType type,
+  WGPUStringView message,
+  void* userdata1,
+  void* userdata2
+)
 {
   fprintf(stderr, "[WEBGPU]: %.*s\n", (int)message.length, message.data);
 }
 
-void LostCallback(WGPUDevice const* device, WGPUDeviceLostReason reason,
-                  WGPUStringView message, void* userdata1, void* userdata2)
+void LostCallback(
+  WGPUDevice const* device,
+  WGPUDeviceLostReason reason,
+  WGPUStringView message,
+  void* userdata1,
+  void* userdata2
+)
 {
   printf("[WebGPU] Device Lost %.*s\n", (int)message.length, message.data);
 }

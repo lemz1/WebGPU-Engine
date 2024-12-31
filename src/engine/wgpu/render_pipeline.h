@@ -35,7 +35,9 @@ typedef struct
 } FL_RenderPipeline;
 
 FL_RenderPipeline FL_RenderPipelineCreate(
-  const FL_Device* device, const FL_RenderPipelineDescriptor* descriptor);
+  const FL_Device* device,
+  const FL_RenderPipelineDescriptor* descriptor
+);
 void FL_RenderPipelineRelease(FL_RenderPipeline* pipeline);
 
 #endif
